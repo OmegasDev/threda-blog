@@ -1,0 +1,135 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PostCard from '../components/PostCard.astro';
+import AdPlacement from '../components/AdPlacement.astro';
+import { supabase } from '../lib/supabase';
+
+// Fetch latest posts with categories
+const { data: posts } = await supabase
+  .from('posts')
+  .select(`
+    *,
+    category:categories(*)
+  `)
+  .eq('published', true)
+  .order('created_at', { ascending: false })
+  .limit(12);
+
+// Fetch trending posts
+const { data: trendingPosts } = await supabase
+  .from('posts')
+  .select(`
+    *,
+    category:categories(*)
+  `)
+  .eq('published', true)
+  .gte('trending_score', 50)
+  .order('trending_score', { ascending: false })
+  .limit(6);
+
+const featuredPost = posts?.[0];
+const regularPosts = posts?.slice(1) || [];
+---
+
+<Layout title="TrendingHub - Your Source for Trending News">
+  <Header />
+  
+  <main>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <h1 class="text-4xl md:text-6xl font-bold mb-6">
+            Stay Ahead of the Curve
+          </h1>
+          <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
+            Your trusted source for trending news across technology, finance, conflicts, and more. 
+            Never miss what matters most.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <span class="px-4 py-2 bg-white/20 rounded-full text-sm font-medium">📱 Tech Updates</span>
+            <span class="px-4 py-2 bg-white/20 rounded-full text-sm font-medium">💰 Financial News</span>
+            <span class="px-4 py-2 bg-white/20 rounded-full text-sm font-medium">🌍 Global Events</span>
+            <span class="px-4 py-2 bg-white/20 rounded-full text-sm font-medium">⚡ Breaking News</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Trending Posts Section -->
+      {trendingPosts && trendingPosts.length > 0 && (
+        <section class="mb-16">
+          <div class="flex items-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">🔥 Trending Now</h2>
+            <div class="ml-4 px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">
+              Hot Topics
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {trendingPosts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Ad Placement -->
+      <AdPlacement position="header-banner" className="mb-16" />
+
+      <!-- Latest Posts -->
+      <section>
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl font-bold text-gray-900">Latest Stories</h2>
+          <a href="/all-posts" class="text-blue-600 hover:text-blue-700 font-medium">
+            View all posts →
+          </a>
+        </div>
+
+        {posts && posts.length > 0 ? (
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Featured Post */}
+            {featuredPost && (
+              <div class="lg:col-span-2">
+                <PostCard post={featuredPost} featured={true} />
+              </div>
+            )}
+            
+            {/* Sidebar */}
+            <div class="space-y-8">
+              {/* Regular Posts */}
+              <div class="space-y-6">
+                {regularPosts.slice(0, 4).map((post) => (
+                  <PostCard post={post} />
+                ))}
+              </div>
+              
+              <!-- Ad Placement -->
+              <AdPlacement position="sidebar-mid" />
+            </div>
+          </div>
+        ) : (
+          <div class="text-center py-12">
+            <div class="text-gray-500 mb-4">
+              <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">No posts yet</h3>
+            <p class="text-gray-600">
+              The content automation system will start publishing trending stories soon.
+            </p>
+          </div>
+        )}
+      </section>
+
+      <!-- Bottom Ad -->
+      <AdPlacement position="content-bottom" className="mt-16" />
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

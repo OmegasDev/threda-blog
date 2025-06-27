@@ -1,0 +1,35 @@
+---
+export interface Props {
+  position: string;
+  className?: string;
+}
+
+const { position, className = "" } = Astro.props;
+
+import { supabase } from '../lib/supabase';
+
+const { data: ad } = await supabase
+  .from('ad_placements')
+  .select('*')
+  .eq('position', position)
+  .eq('active', true)
+  .single();
+---
+
+{ad && (
+  <div class={`ad-placement bg-gray-100 border border-gray-200 rounded-lg p-4 text-center ${className}`}>
+    <div class="text-xs text-gray-500 mb-2">Advertisement</div>
+    <div set:html={ad.content}></div>
+  </div>
+)}
+
+<!-- Fallback placeholder for development -->
+{!ad && (
+  <div class={`ad-placement bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${className}`}>
+    <div class="text-gray-400">
+      <div class="text-sm font-medium mb-2">Ad Space Available</div>
+      <div class="text-xs">Position: {position}</div>
+      <div class="text-xs text-blue-600 mt-2">Contact us for advertising opportunities</div>
+    </div>
+  </div>
+)}
