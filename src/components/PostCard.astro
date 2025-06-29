@@ -1,80 +1,122 @@
 ---
 import { format } from 'date-fns';
-import type { Post } from '../lib/supabase';
 
 export interface Props {
-  post: Post;
+  post: any;
   featured?: boolean;
+  variant?: 'default' | 'compact' | 'hero';
 }
 
-const { post, featured = false } = Astro.props;
+const { post, featured = false, variant = 'default' } = Astro.props;
 const formattedDate = format(new Date(post.created_at), 'MMM dd, yyyy');
+
+const isHero = variant === 'hero';
+const isCompact = variant === 'compact';
 ---
 
-<article class={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden ${featured ? 'col-span-2 row-span-2' : ''}`}>
-  <div class={`${featured ? 'flex flex-col h-full' : ''}`}>
-    {post.featured_image && (
-      <div class={`relative ${featured ? 'h-64' : 'h-48'}`}>
-        <img 
-          src={post.featured_image} 
-          alt={post.title}
-          class="w-full h-full object-cover"
-          loading="lazy"
-        />
-        {post.category && (
-          <div 
-            class="absolute top-4 left-4 px-3 py-1 rounded-full text-white text-xs font-medium"
-            style={`background-color: ${post.category.color}`}
-          >
-            {post.category.name}
-          </div>
-        )}
-      </div>
-    )}
-    
-    <div class={`p-6 ${featured ? 'flex-1 flex flex-col' : ''}`}>
-      <div class="flex items-center text-sm text-gray-500 mb-3">
-        <time datetime={post.created_at}>{formattedDate}</time>
-        <span class="mx-2">•</span>
-        <span>{post.view_count} views</span>
-        {post.trending_score > 50 && (
-          <>
-            <span class="mx-2">•</span>
-            <span class="text-red-500 font-medium">🔥 Trending</span>
-          </>
-        )}
-      </div>
+<article class={`group relative bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-slate-900/20 transition-all duration-300 overflow-hidden border border-cream-200 dark:border-slate-700 hover:border-luxury-200 dark:hover:border-luxury-800 ${
+  isHero ? 'col-span-full lg:col-span-2 row-span-2' : 
+  featured ? 'col-span-full md:col-span-2' : 
+  isCompact ? '' : ''
+}`}>
+  
+  <!-- Featured Image -->
+  {post.featured_image && (
+    <div class={`relative overflow-hidden ${
+      isHero ? 'h-80 lg:h-96' : 
+      featured ? 'h-64' : 
+      isCompact ? 'h-40' : 'h-48'
+    }`}>
+      <img 
+        src={post.featured_image} 
+        alt={post.title}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        loading="lazy"
+      />
       
-      <h2 class={`font-bold text-gray-900 mb-3 line-clamp-2 hover:text-blue-600 transition-colors ${featured ? 'text-2xl' : 'text-lg'}`}>
-        <a href={`/post/${post.slug}`}>{post.title}</a>
-      </h2>
+      <!-- Gradient overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
       
-      <p class={`text-gray-600 mb-4 ${featured ? 'text-base flex-1' : 'text-sm line-clamp-3'}`}>
-        {post.excerpt}
-      </p>
-      
-      <div class="flex items-center justify-between">
-        <a 
-          href={`/post/${post.slug}`} 
-          class="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors inline-flex items-center"
-        >
-          Read more
-          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </a>
-        
-        {post.category && !post.featured_image && (
+      <!-- Category badge -->
+      {post.category && (
+        <div class="absolute top-4 left-4">
           <span 
-            class="px-2 py-1 rounded-full text-white text-xs font-medium"
-            style={`background-color: ${post.category.color}`}
+            class="inline-flex items-center px-3 py-1.5 rounded-full text-white text-sm font-medium backdrop-blur-sm shadow-lg"
+            style={`background-color: ${post.category.color}cc`}
           >
             {post.category.name}
           </span>
-        )}
-      </div>
+        </div>
+      )}
+      
+      <!-- Trending badge -->
+      {post.trending_score > 70 && (
+        <div class="absolute top-4 right-4">
+          <div class="flex items-center space-x-1 bg-red-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
+            <span>🔥</span>
+            <span>Trending</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )}
+  
+  <!-- Content -->
+  <div class={`p-6 ${isHero ? 'lg:p-8' : featured ? 'p-6' : isCompact ? 'p-4' : 'p-6'}`}>
+    <!-- Meta info -->
+    <div class="flex items-center text-sm text-slate-500 dark:text-slate-400 mb-3 space-x-2">
+      <time datetime={post.created_at} class="font-medium">{formattedDate}</time>
+      <span>•</span>
+      <span>{post.view_count.toLocaleString()} views</span>
+      {post.trending_score > 50 && (
+        <>
+          <span>•</span>
+          <span class="text-red-500 font-medium">Trending</span>
+        </>
+      )}
+    </div>
+    
+    <!-- Title -->
+    <h2 class={`font-bold text-slate-900 dark:text-white mb-3 line-clamp-2 group-hover:text-luxury-600 dark:group-hover:text-luxury-400 transition-colors duration-200 ${
+      isHero ? 'text-3xl lg:text-4xl leading-tight' : 
+      featured ? 'text-2xl' : 
+      isCompact ? 'text-lg' : 'text-xl'
+    }`}>
+      <a href={`/post/${post.slug}`} class="hover:underline decoration-luxury-500 decoration-2 underline-offset-4">
+        {post.title}
+      </a>
+    </h2>
+    
+    <!-- Excerpt -->
+    <p class={`text-slate-600 dark:text-slate-300 mb-4 leading-relaxed ${
+      isHero ? 'text-lg line-clamp-3' : 
+      featured ? 'text-base line-clamp-3' : 
+      isCompact ? 'text-sm line-clamp-2' : 'text-sm line-clamp-3'
+    }`}>
+      {post.excerpt}
+    </p>
+    
+    <!-- Footer -->
+    <div class="flex items-center justify-between">
+      <a 
+        href={`/post/${post.slug}`} 
+        class="inline-flex items-center text-luxury-600 dark:text-luxury-400 hover:text-luxury-700 dark:hover:text-luxury-300 font-medium text-sm transition-colors duration-200 group/link"
+      >
+        Read more
+        <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+      
+      <!-- Reading time -->
+      <span class="text-xs text-slate-400 dark:text-slate-500">
+        {Math.ceil(post.content.split(' ').length / 200)} min read
+      </span>
     </div>
   </div>
+  
+  <!-- Hover effect overlay -->
+  <div class="absolute inset-0 bg-gradient-to-r from-luxury-500/5 to-luxury-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 </article>
 
 <style>
