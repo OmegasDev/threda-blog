@@ -28,10 +28,7 @@ if (!supabaseAnonKey || supabaseAnonKey.trim() === '') {
 
 // Validate URL format with better error handling
 try {
-  // Only validate if we're in a browser environment or if the URL is not empty
-  if (typeof window !== 'undefined' || supabaseUrl) {
-    new URL(supabaseUrl)
-  }
+  new URL(supabaseUrl)
 } catch (error) {
   console.error('Invalid Supabase URL format:', supabaseUrl, 'Error:', error)
   throw new Error(`Invalid Supabase URL format: ${supabaseUrl}. Please ensure it's a valid URL (e.g., https://your-project-id.supabase.co)`)
