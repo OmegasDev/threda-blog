@@ -1,0 +1,160 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ThredCard from '../../components/ThredCard.astro';
+import { dummyHubs, getThredsByHub } from '../../lib/dummyData';
+
+export async function getStaticPaths() {
+  const hubs = dummyHubs;
+  return hubs.map((hub) => ({
+    params: { slug: hub.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const hub = dummyHubs.find(h => h.slug === slug);
+
+if (!hub) {
+  return Astro.redirect('/404');
+}
+
+// Get threds for this hub
+const hubThreds = getThredsByHub(slug);
+const featuredThred = hubThreds[0];
+const otherThreds = hubThreds.slice(1);
+---
+
+<Layout 
+  title={`${hub.name} Hub - Threda`}
+  description={hub.description || `Latest ${hub.name.toLowerCase()} threds and discussions`}
+>
+  <Header />
+  
+  <main class="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <!-- Hub Header -->
+    <section class="bg-gradient-to-br from-primary-50 via-white to-primary-100 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <div class="mb-6">
+            <div class="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center text-4xl shadow-lg" style={`background-color: ${hub.color}20; border: 2px solid ${hub.color}30`}>
+              {hub.icon}
+            </div>
+          </div>
+          <h1 class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+            {hub.name} Hub
+          </h1>
+          <p class="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-6">
+            {hub.description}
+          </p>
+          <div class="flex items-center justify-center space-x-6 text-sm text-slate-500 dark:text-slate-400">
+            <div class="flex items-center space-x-1">
+              <span>👥</span>
+              <span>{hub.followerCount.toLocaleString()} followers</span>
+            </div>
+            <div class="flex items-center space-x-1">
+              <span>📝</span>
+              <span>{hub.thredCount} threds</span>
+            </div>
+          </div>
+          <div class="mt-6">
+            <button class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors">
+              Follow Hub
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {hubThreds.length > 0 ? (
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <!-- Main Content -->
+          <div class="lg:col-span-3">
+            {featuredThred && (
+              <div class="mb-12">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Featured in {hub.name}</h2>
+                <ThredCard thred={featuredThred} variant="hero" />
+              </div>
+            )}
+
+            {otherThreds.length > 0 && (
+              <div>
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Latest {hub.name} Threds</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {otherThreds.map((thred, index) => (
+                    <div class="animate-slide-up" style={`animation-delay: ${index * 0.1}s`}>
+                      <ThredCard thred={thred} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <!-- Sidebar -->
+          <div class="lg:col-span-1">
+            <div class="sticky top-24 space-y-6">
+              <!-- Hub Stats -->
+              <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Hub Stats</h3>
+                <div class="space-y-4">
+                  <div class="flex justify-between">
+                    <span class="text-slate-600 dark:text-slate-400">Total Threds</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">{hub.thredCount}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-600 dark:text-slate-400">Followers</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">{hub.followerCount.toLocaleString()}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-600 dark:text-slate-400">Today's Activity</span>
+                    <span class="font-semibold text-green-600">+{Math.floor(Math.random() * 50) + 10}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Other Hubs */
+              <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Explore Other Hubs</h3>
+                <div class="space-y-3">
+                  {dummyHubs.filter(h => h.id !== hub.id).slice(0, 4).map((otherHub) => (
+                    <a 
+                      href={`/hub/${otherHub.slug}`}
+                      class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors group"
+                    >
+                      <span class="text-2xl mr-3">{otherHub.icon}</span>
+                      <div class="flex-1">
+                        <span class="text-slate-700 dark:text-slate-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 font-medium block">
+                          {otherHub.name}
+                        </span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">
+                          {otherHub.thredCount} threds
+                        </span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="text-center py-20">
+          <div class="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-4xl mb-6" style={`background-color: ${hub.color}20`}>
+            {hub.icon}
+          </div>
+          <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">No Threds Yet</h3>
+          <p class="text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+            This hub is just getting started. Be the first to drop a thred here!
+          </p>
+          <button class="mt-6 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors">
+            Start the conversation
+          </button>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

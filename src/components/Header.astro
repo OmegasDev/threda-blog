@@ -1,12 +1,12 @@
 ---
-import { dummyCategories } from '../lib/dummyData';
+import { dummyHubs } from '../lib/dummyData';
 import ThemeToggle from './ThemeToggle';
 
 // Use dummy data for now - replace with Supabase query when ready
-const categories = dummyCategories;
+const hubs = dummyHubs.slice(0, 5); // Show top 5 hubs in nav
 ---
 
-<header class="sticky top-0 z-50 bg-cream-50/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-cream-200 dark:border-slate-700">
+<header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
       <!-- Logo -->
@@ -23,7 +23,7 @@ const categories = dummyCategories;
               Threda
             </span>
             <div class="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wide">
-              TRENDING INSIGHTS
+              STAY IN THE LOOP
             </div>
           </div>
         </a>
@@ -33,33 +33,60 @@ const categories = dummyCategories;
       <nav class="hidden md:flex items-center space-x-1">
         <a 
           href="/" 
-          class="px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all duration-200 rounded-lg hover:bg-cream-100 dark:hover:bg-slate-800"
+          class="px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all duration-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
         >
-          Home
+          The Loop
         </a>
-        {categories.map((category) => (
+        {hubs.map((hub) => (
           <a 
-            href={`/category/${category.slug}`}
-            class="px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all duration-200 rounded-lg hover:bg-cream-100 dark:hover:bg-slate-800 relative group"
+            href={`/hub/${hub.slug}`}
+            class="px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all duration-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 relative group"
           >
-            {category.name}
+            <span class="mr-1">{hub.icon}</span>
+            {hub.name}
             <div 
               class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 group-hover:w-full transition-all duration-300 rounded-full"
-              style={`background-color: ${category.color}`}
+              style={`background-color: ${hub.color}`}
             ></div>
           </a>
         ))}
       </nav>
 
+      <!-- Search Bar -->
+      <div class="hidden lg:flex flex-1 max-w-md mx-8">
+        <div class="relative w-full">
+          <input 
+            type="text" 
+            placeholder="Search threds..." 
+            class="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+            id="search-input"
+          />
+          <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
+
       <!-- Right side controls -->
       <div class="flex items-center space-x-3">
         <ThemeToggle client:load />
+        
+        <!-- Mobile search button -->
+        <button 
+          id="mobile-search-button"
+          type="button" 
+          class="lg:hidden p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
+        >
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </button>
         
         <!-- Mobile menu button -->
         <button 
           id="mobile-menu-button"
           type="button" 
-          class="md:hidden p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-cream-100 dark:hover:bg-slate-800 transition-all duration-200"
+          class="md:hidden p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
           aria-expanded="false"
         >
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,21 +96,36 @@ const categories = dummyCategories;
       </div>
     </div>
 
+    <!-- Mobile search bar -->
+    <div id="mobile-search" class="lg:hidden hidden pb-4">
+      <div class="relative">
+        <input 
+          type="text" 
+          placeholder="Search threds..." 
+          class="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+        />
+        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+    </div>
+
     <!-- Mobile menu -->
-    <div id="mobile-menu" class="md:hidden hidden border-t border-cream-200 dark:border-slate-700 py-4">
+    <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200 dark:border-slate-700 py-4">
       <div class="space-y-1">
         <a 
           href="/" 
-          class="block px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all duration-200 rounded-lg hover:bg-cream-100 dark:hover:bg-slate-800"
+          class="block px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all duration-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
         >
-          Home
+          🔄 The Loop
         </a>
-        {categories.map((category) => (
+        {hubs.map((hub) => (
           <a 
-            href={`/category/${category.slug}`}
-            class="block px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all duration-200 rounded-lg hover:bg-cream-100 dark:hover:bg-slate-800"
+            href={`/hub/${hub.slug}`}
+            class="block px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all duration-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
           >
-            {category.name}
+            <span class="mr-2">{hub.icon}</span>
+            {hub.name}
           </a>
         ))}
       </div>
@@ -93,14 +135,35 @@ const categories = dummyCategories;
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const button = document.getElementById('mobile-menu-button');
+    const menuButton = document.getElementById('mobile-menu-button');
     const menu = document.getElementById('mobile-menu');
+    const searchButton = document.getElementById('mobile-search-button');
+    const mobileSearch = document.getElementById('mobile-search');
     
-    if (button && menu) {
-      button.addEventListener('click', function() {
-        const isExpanded = button.getAttribute('aria-expanded') === 'true';
-        button.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
+    if (menuButton && menu) {
+      menuButton.addEventListener('click', function() {
+        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+        menuButton.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
         menu.classList.toggle('hidden');
+      });
+    }
+
+    if (searchButton && mobileSearch) {
+      searchButton.addEventListener('click', function() {
+        mobileSearch.classList.toggle('hidden');
+      });
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          const query = e.target.value.trim();
+          if (query) {
+            window.location.href = `/search?q=${encodeURIComponent(query)}`;
+          }
+        }
       });
     }
   });
