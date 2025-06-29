@@ -14,7 +14,7 @@ const isHero = variant === 'hero';
 const isCompact = variant === 'compact';
 ---
 
-<article class={`group relative bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-slate-900/20 transition-all duration-300 overflow-hidden border border-cream-200 dark:border-slate-700 hover:border-luxury-200 dark:hover:border-luxury-800 ${
+<article class={`group relative bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-slate-900/20 transition-all duration-300 overflow-hidden border border-cream-200 dark:border-slate-700 hover:border-primary-200 dark:hover:border-primary-800 ${
   isHero ? 'col-span-full lg:col-span-2 row-span-2' : 
   featured ? 'col-span-full md:col-span-2' : 
   isCompact ? '' : ''
@@ -77,12 +77,12 @@ const isCompact = variant === 'compact';
     </div>
     
     <!-- Title -->
-    <h2 class={`font-bold text-slate-900 dark:text-white mb-3 line-clamp-2 group-hover:text-luxury-600 dark:group-hover:text-luxury-400 transition-colors duration-200 ${
+    <h2 class={`font-bold text-slate-900 dark:text-white mb-3 line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 ${
       isHero ? 'text-3xl lg:text-4xl leading-tight' : 
       featured ? 'text-2xl' : 
       isCompact ? 'text-lg' : 'text-xl'
     }`}>
-      <a href={`/post/${post.slug}`} class="hover:underline decoration-luxury-500 decoration-2 underline-offset-4">
+      <a href={`/post/${post.slug}`} class="hover:underline decoration-primary-500 decoration-2 underline-offset-4">
         {post.title}
       </a>
     </h2>
@@ -100,7 +100,7 @@ const isCompact = variant === 'compact';
     <div class="flex items-center justify-between">
       <a 
         href={`/post/${post.slug}`} 
-        class="inline-flex items-center text-luxury-600 dark:text-luxury-400 hover:text-luxury-700 dark:hover:text-luxury-300 font-medium text-sm transition-colors duration-200 group/link"
+        class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm transition-colors duration-200 group/link"
       >
         Read more
         <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +116,7 @@ const isCompact = variant === 'compact';
   </div>
   
   <!-- Hover effect overlay -->
-  <div class="absolute inset-0 bg-gradient-to-r from-luxury-500/5 to-luxury-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+  <div class="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-primary-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 </article>
 
 <style>

@@ -36,7 +36,7 @@ export default function ThemeToggle() {
     >
       <div className="relative w-5 h-5">
         <Sun 
-          className={`absolute inset-0 w-5 h-5 text-luxury-600 transition-all duration-300 ${
+          className={`absolute inset-0 w-5 h-5 text-primary-600 transition-all duration-300 ${
             isDark ? 'opacity-0 rotate-90 scale-0' : 'opacity-100 rotate-0 scale-100'
           }`} 
         />

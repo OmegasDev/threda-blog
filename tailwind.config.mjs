@@ -14,18 +14,18 @@ export default {
           400: '#f0e4c8',
           500: '#e8d5a8',
         },
-        // Luxury primary color (deep gold/bronze)
-        luxury: {
-          50: '#fef7ed',
-          100: '#fdedd3',
-          200: '#fbd7a5',
-          300: '#f8bc6d',
-          400: '#f59e42',
-          500: '#d97706',
-          600: '#c2610c',
-          700: '#a1470a',
-          800: '#7c2d12',
-          900: '#451a03',
+        // Primary brand color (deep blue/purple)
+        primary: {
+          50: '#f0f4ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1',
+          600: '#4f46e5',
+          700: '#4338ca',
+          800: '#3730a3',
+          900: '#312e81',
         },
         // Light dark (sophisticated gray)
         slate: {

@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PostCard from '../components/PostCard.astro';
+import AdPlacement from '../components/AdPlacement.astro';
 import { dummyPosts, dummyCategories } from '../lib/dummyData';
 
 // Use dummy data for now - replace with Supabase queries when ready
@@ -23,106 +24,105 @@ const recentPosts = posts.slice(1, 7);
   <Header />
   
   <main class="min-h-screen">
-    <!-- Hero Section -->
-    <section class="relative bg-gradient-to-br from-luxury-50 via-cream-50 to-luxury-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-20 lg:py-32 overflow-hidden">
-      <!-- Background decoration -->
-      <div class="absolute inset-0 opacity-10 dark:opacity-5">
-        <div class="absolute top-20 left-10 w-72 h-72 bg-luxury-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse-slow"></div>
-        <div class="absolute top-40 right-10 w-72 h-72 bg-luxury-600 rounded-full mix-blend-multiply filter blur-xl animate-pulse-slow" style="animation-delay: 1s;"></div>
-        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-luxury-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse-slow" style="animation-delay: 2s;"></div>
-      </div>
-      
-      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Hero Section with Ad Space -->
+    <section class="relative bg-gradient-to-br from-primary-50 via-cream-50 to-primary-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-12 lg:py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Top Banner Ad -->
+        <div class="mb-8">
+          <AdPlacement position="header-banner" className="max-w-4xl mx-auto" />
+        </div>
+        
         <div class="text-center">
-          <div class="mb-8">
-            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-luxury-100 dark:bg-luxury-900/30 text-luxury-800 dark:text-luxury-300 border border-luxury-200 dark:border-luxury-800">
-              <span class="w-2 h-2 bg-luxury-500 rounded-full mr-2 animate-pulse"></span>
+          <div class="mb-6">
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
+              <span class="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
               Live Trending Insights
             </span>
           </div>
           
-          <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 bg-gradient-to-r from-slate-900 via-luxury-800 to-slate-900 dark:from-white dark:via-luxury-300 dark:to-white bg-clip-text text-transparent leading-tight">
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-slate-900 via-primary-800 to-slate-900 dark:from-white dark:via-primary-300 dark:to-white bg-clip-text text-transparent leading-tight">
             Stay Ahead of
-            <span class="block bg-gradient-to-r from-luxury-600 to-luxury-800 dark:from-luxury-400 dark:to-luxury-600 bg-clip-text text-transparent">
+            <span class="block bg-gradient-to-r from-primary-600 to-primary-800 dark:from-primary-400 dark:to-primary-600 bg-clip-text text-transparent">
               The Curve
             </span>
           </h1>
           
-          <p class="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+          <p class="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-3xl mx-auto leading-relaxed">
             Your premier destination for trending insights across technology, business, lifestyle, and innovation. 
             Expert analysis meets cutting-edge content.
           </p>
           
-          <div class="flex flex-wrap justify-center gap-4 mb-12">
-            {categories.slice(0, 4).map((category) => (
+          <div class="flex flex-wrap justify-center gap-3 mb-8">
+            {categories.slice(0, 5).map((category) => (
               <a 
                 href={`/category/${category.slug}`}
-                class="group px-6 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-cream-200 dark:border-slate-700 hover:border-luxury-300 dark:hover:border-luxury-600 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                class="group px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-cream-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-300 hover:shadow-lg hover:scale-105"
               >
-                <span class="text-slate-700 dark:text-slate-300 group-hover:text-luxury-600 dark:group-hover:text-luxury-400 font-medium">
+                <span class="text-slate-700 dark:text-slate-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 font-medium text-sm">
                   {category.name}
                 </span>
               </a>
             ))}
           </div>
-          
-          <div class="flex justify-center">
-            <a 
-              href="#latest" 
-              class="inline-flex items-center px-8 py-4 bg-luxury-600 hover:bg-luxury-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
-            >
-              Explore Latest Insights
-              <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-              </svg>
-            </a>
-          </div>
         </div>
       </div>
     </section>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <!-- Trending Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Trending Section with Sidebar Ad -->
       {trendingPosts.length > 0 && (
-        <section class="mb-20" id="trending">
-          <div class="flex items-center justify-between mb-12">
+        <section class="mb-16" id="trending">
+          <div class="flex items-center justify-between mb-8">
             <div class="flex items-center">
               <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
-                  <span class="text-2xl">🔥</span>
+                <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔥</span>
                 </div>
                 <div>
-                  <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white">Trending Now</h2>
-                  <p class="text-slate-600 dark:text-slate-400">Most popular stories this week</p>
+                  <h2 class="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">Trending Now</h2>
+                  <p class="text-slate-600 dark:text-slate-400 text-sm">Most popular stories this week</p>
                 </div>
               </div>
-            </div>
-            <div class="hidden md:flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400">
-              <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span>Live updates</span>
             </div>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {trendingPosts.map((post, index) => (
-              <div class="animate-slide-up" style={`animation-delay: ${index * 0.1}s`}>
-                <PostCard post={post} />
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Trending Posts -->
+            <div class="lg:col-span-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {trendingPosts.map((post, index) => (
+                  <div class="animate-slide-up" style={`animation-delay: ${index * 0.1}s`}>
+                    <PostCard post={post} />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+            
+            <!-- Sidebar Ad -->
+            <div class="lg:col-span-1">
+              <div class="sticky top-24">
+                <AdPlacement position="sidebar-trending" />
+              </div>
+            </div>
           </div>
         </section>
       )}
 
+      <!-- In-Content Ad -->
+      <div class="mb-16">
+        <AdPlacement position="content-middle" className="max-w-4xl mx-auto" />
+      </div>
+
       <!-- Latest Posts Section -->
       <section id="latest">
-        <div class="flex items-center justify-between mb-12">
+        <div class="flex items-center justify-between mb-8">
           <div>
-            <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2">Latest Insights</h2>
+            <h2 class="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white mb-2">Latest Articles</h2>
             <p class="text-slate-600 dark:text-slate-400">Fresh perspectives on what matters most</p>
           </div>
           <a 
             href="/all-posts" 
-            class="hidden md:inline-flex items-center text-luxury-600 dark:text-luxury-400 hover:text-luxury-700 dark:hover:text-luxury-300 font-medium transition-colors duration-200 group"
+            class="hidden md:inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-200 group"
           >
             View all posts
             <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,25 +132,63 @@ const recentPosts = posts.slice(1, 7);
         </div>
 
         {posts && posts.length > 0 ? (
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Featured Post -->
-            <div class="lg:col-span-8">
-              <PostCard post={featuredPost} variant="hero" />
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-3">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Featured Post -->
+                <div class="lg:col-span-2">
+                  <PostCard post={featuredPost} variant="hero" />
+                </div>
+              </div>
+              
+              <!-- Recent Posts Grid -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {recentPosts.slice(0, 6).map((post, index) => (
+                  <div class="animate-slide-up" style={`animation-delay: ${(index + 1) * 0.1}s`}>
+                    <PostCard post={post} />
+                  </div>
+                ))}
+              </div>
             </div>
             
-            <!-- Sidebar Posts -->
-            <div class="lg:col-span-4 space-y-6">
-              {recentPosts.slice(0, 4).map((post, index) => (
-                <div class="animate-slide-up" style={`animation-delay: ${(index + 1) * 0.1}s`}>
-                  <PostCard post={post} variant="compact" />
+            <!-- Sidebar with Ads -->
+            <div class="lg:col-span-1">
+              <div class="sticky top-24 space-y-8">
+                <!-- Sidebar Ad 1 -->
+                <AdPlacement position="sidebar-main" />
+                
+                <!-- Popular Posts -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-cream-200 dark:border-slate-700">
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Popular This Week</h3>
+                  <div class="space-y-4">
+                    {posts.slice(0, 4).map((post, index) => (
+                      <div class="flex items-start space-x-3 group">
+                        <span class="flex-shrink-0 w-6 h-6 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full flex items-center justify-center text-sm font-bold">
+                          {index + 1}
+                        </span>
+                        <div class="flex-1 min-w-0">
+                          <a href={`/post/${post.slug}`} class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+                            {post.title}
+                          </a>
+                          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                            {post.view_count.toLocaleString()} views
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+                
+                <!-- Sidebar Ad 2 -->
+                <AdPlacement position="sidebar-bottom" />
+              </div>
             </div>
           </div>
         ) : (
           <div class="text-center py-20">
-            <div class="w-24 h-24 bg-luxury-100 dark:bg-luxury-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-12 h-12 text-luxury-600 dark:text-luxury-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-24 h-24 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-12 h-12 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2"></path>
               </svg>
             </div>
@@ -162,24 +200,29 @@ const recentPosts = posts.slice(1, 7);
         )}
       </section>
 
+      <!-- Bottom Ad -->
+      <div class="mt-16">
+        <AdPlacement position="footer-banner" className="max-w-4xl mx-auto" />
+      </div>
+
       <!-- Newsletter Section -->
-      <section class="mt-20 bg-gradient-to-r from-luxury-600 to-luxury-800 rounded-3xl p-8 lg:p-12 text-white">
+      <section class="mt-16 bg-gradient-to-r from-primary-600 to-primary-800 rounded-3xl p-8 lg:p-12 text-white">
         <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-3xl lg:text-4xl font-bold mb-4">Never Miss a Trend</h2>
-          <p class="text-xl text-luxury-100 mb-8">
+          <h2 class="text-2xl lg:text-3xl font-bold mb-4">Never Miss a Trend</h2>
+          <p class="text-lg text-primary-100 mb-6">
             Get the latest insights delivered straight to your inbox. Join thousands of readers staying ahead of the curve.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <input 
               type="email" 
               placeholder="Enter your email" 
-              class="flex-1 px-6 py-4 rounded-xl text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-luxury-300"
+              class="flex-1 px-4 py-3 rounded-xl text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
             />
-            <button class="px-8 py-4 bg-white text-luxury-700 font-semibold rounded-xl hover:bg-luxury-50 transition-colors duration-200">
+            <button class="px-6 py-3 bg-white text-primary-700 font-semibold rounded-xl hover:bg-primary-50 transition-colors duration-200">
               Subscribe
             </button>
           </div>
-          <p class="text-sm text-luxury-200 mt-4">
+          <p class="text-sm text-primary-200 mt-4">
             No spam, unsubscribe at any time.
           </p>
         </div>

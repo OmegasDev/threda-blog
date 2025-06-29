@@ -113,28 +113,28 @@ const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site);
   }
   
   ::-webkit-scrollbar-thumb {
-    background: theme('colors.luxury.400');
+    background: theme('colors.primary.400');
     border-radius: 4px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: theme('colors.luxury.500');
+    background: theme('colors.primary.500');
   }
   
   /* Selection */
   ::selection {
-    background: theme('colors.luxury.200');
-    color: theme('colors.luxury.900');
+    background: theme('colors.primary.200');
+    color: theme('colors.primary.900');
   }
   
   .dark ::selection {
-    background: theme('colors.luxury.800');
-    color: theme('colors.luxury.100');
+    background: theme('colors.primary.800');
+    color: theme('colors.primary.100');
   }
   
   /* Focus styles */
   :focus-visible {
-    outline: 2px solid theme('colors.luxury.500');
+    outline: 2px solid theme('colors.primary.500');
     outline-offset: 2px;
   }
 </style>
