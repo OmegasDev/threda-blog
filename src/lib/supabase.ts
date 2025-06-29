@@ -26,11 +26,14 @@ if (!supabaseAnonKey || supabaseAnonKey.trim() === '') {
   throw new Error('Missing Supabase anonymous key. Please set VITE_SUPABASE_ANON_KEY or PUBLIC_SUPABASE_ANON_KEY in your .env file')
 }
 
-// Validate URL format
+// Validate URL format with better error handling
 try {
-  new URL(supabaseUrl)
+  // Only validate if we're in a browser environment or if the URL is not empty
+  if (typeof window !== 'undefined' || supabaseUrl) {
+    new URL(supabaseUrl)
+  }
 } catch (error) {
-  console.error('Invalid Supabase URL format:', supabaseUrl)
+  console.error('Invalid Supabase URL format:', supabaseUrl, 'Error:', error)
   throw new Error(`Invalid Supabase URL format: ${supabaseUrl}. Please ensure it's a valid URL (e.g., https://your-project-id.supabase.co)`)
 }
 
