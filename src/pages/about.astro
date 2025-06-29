@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdPlacement from '../components/AdPlacement.astro';
+---
+
+<Layout 
+  title="About Threda - Your Source for Trending Insights"
+  description="Learn about Threda's mission to deliver cutting-edge insights across technology, business, lifestyle, and innovation."
+>
+  <Header />
+  
+  <main class="min-h-screen">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary-50 via-cream-50 to-primary-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-20">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">
+          About Threda
+        </h1>
+        <p class="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">
+          Your premier destination for trending insights across technology, business, lifestyle, and innovation.
+        </p>
+      </div>
+    </section>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <!-- Top Ad -->
+      <div class="mb-12">
+        <AdPlacement position="about-top" className="max-w-3xl mx-auto" />
+      </div>
+
+      <div class="prose prose-lg prose-slate dark:prose-invert max-w-none">
+        <h2>Our Mission</h2>
+        <p>
+          At Threda, we believe that staying informed shouldn't be overwhelming. Our mission is to curate and deliver 
+          the most relevant, trending insights that matter to modern professionals and curious minds alike.
+        </p>
+
+        <h2>What We Do</h2>
+        <p>
+          We leverage cutting-edge automation and expert curation to bring you the latest trends across multiple domains:
+        </p>
+        <ul>
+          <li><strong>Technology:</strong> Latest innovations, gadgets, and digital transformation insights</li>
+          <li><strong>Business:</strong> Market trends, startup stories, and strategic insights</li>
+          <li><strong>Lifestyle:</strong> Health, wellness, and modern living trends</li>
+          <li><strong>Finance:</strong> Investment opportunities, market analysis, and financial literacy</li>
+          <li><strong>Innovation:</strong> Breakthrough discoveries and future-shaping developments</li>
+        </ul>
+
+        <!-- Mid-content Ad -->
+        <div class="not-prose my-12">
+          <AdPlacement position="about-middle" />
+        </div>
+
+        <h2>Our Approach</h2>
+        <p>
+          We combine automated content discovery with human editorial oversight to ensure quality and relevance. 
+          Our platform continuously monitors trending topics and emerging stories, filtering them through our 
+          editorial standards to deliver content that's both timely and valuable.
+        </p>
+
+        <h2>Why Choose Threda?</h2>
+        <ul>
+          <li><strong>Curated Quality:</strong> Every article is selected for its relevance and insight value</li>
+          <li><strong>Trending Focus:</strong> We prioritize what's happening now and what's coming next</li>
+          <li><strong>Expert Analysis:</strong> Our content goes beyond news to provide actionable insights</li>
+          <li><strong>User Experience:</strong> Clean, fast, and mobile-optimized reading experience</li>
+        </ul>
+
+        <h2>Join Our Community</h2>
+        <p>
+          Whether you're a business professional, technology enthusiast, or simply someone who loves staying 
+          ahead of trends, Threda is designed for you. Join thousands of readers who trust us to keep them 
+          informed and inspired.
+        </p>
+      </div>
+
+      <!-- Bottom Ad -->
+      <div class="mt-12">
+        <AdPlacement position="about-bottom" className="max-w-3xl mx-auto" />
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
