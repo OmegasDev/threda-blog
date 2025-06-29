@@ -16,11 +16,9 @@ if (!supabaseAnonKey) {
   throw new Error('Missing Supabase anonymous key. Please set VITE_SUPABASE_ANON_KEY or PUBLIC_SUPABASE_ANON_KEY in your .env file')
 }
 
-// Validate URL format
-try {
-  new URL(supabaseUrl)
-} catch (error) {
-  throw new Error(`Invalid Supabase URL format: ${supabaseUrl}. URL must be a valid URL starting with http:// or https://`)
+// Validate URL format - more lenient validation
+if (!supabaseUrl.startsWith('http://') && !supabaseUrl.startsWith('https://')) {
+  throw new Error(`Invalid Supabase URL format: ${supabaseUrl}. URL must start with http:// or https://`)
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
