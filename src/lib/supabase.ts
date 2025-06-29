@@ -16,12 +16,19 @@ if (!supabaseAnonKey) {
   throw new Error('Missing Supabase anonymous key. Please set VITE_SUPABASE_ANON_KEY or PUBLIC_SUPABASE_ANON_KEY in your .env file')
 }
 
-// Clean the URL
-const cleanUrl = supabaseUrl.trim()
+// Clean the URL - remove any whitespace and quotes
+const cleanUrl = supabaseUrl.trim().replace(/^["']|["']$/g, '')
 
-// Simple validation - just check if it starts with https:// or http://
-if (!cleanUrl.startsWith('https://') && !cleanUrl.startsWith('http://')) {
-  throw new Error(`Invalid Supabase URL format: ${cleanUrl}. URL must start with http:// or https://`)
+// Validate URL format
+try {
+  new URL(cleanUrl)
+} catch (error) {
+  throw new Error(`Invalid Supabase URL format: ${cleanUrl}. Please ensure it's a valid URL starting with https://`)
+}
+
+// Additional check for Supabase-specific URL format
+if (!cleanUrl.includes('.supabase.co')) {
+  console.warn('Warning: URL does not appear to be a standard Supabase URL')
 }
 
 export const supabase = createClient(cleanUrl, supabaseAnonKey)
