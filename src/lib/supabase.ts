@@ -1,19 +1,19 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Use the correct environment variables for Astro
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || 
-                   import.meta.env.VITE_SUPABASE_URL
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 
+                   import.meta.env.PUBLIC_SUPABASE_URL
 
-const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || 
-                       import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 
+                       import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 
 // Validate environment variables
 if (!supabaseUrl) {
-  throw new Error('Missing Supabase URL. Please set PUBLIC_SUPABASE_URL or VITE_SUPABASE_URL in your .env file')
+  throw new Error('Missing Supabase URL. Please set VITE_SUPABASE_URL or PUBLIC_SUPABASE_URL in your .env file')
 }
 
 if (!supabaseAnonKey) {
-  throw new Error('Missing Supabase anonymous key. Please set PUBLIC_SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY in your .env file')
+  throw new Error('Missing Supabase anonymous key. Please set VITE_SUPABASE_ANON_KEY or PUBLIC_SUPABASE_ANON_KEY in your .env file')
 }
 
 // Validate URL format
