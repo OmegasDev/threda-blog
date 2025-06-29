@@ -16,17 +16,11 @@ if (!supabaseAnonKey) {
   throw new Error('Missing Supabase anonymous key. Please set VITE_SUPABASE_ANON_KEY or PUBLIC_SUPABASE_ANON_KEY in your .env file')
 }
 
-// Clean and validate URL format
+// Clean the URL
 const cleanUrl = supabaseUrl.trim()
 
-// More robust URL validation
-try {
-  new URL(cleanUrl)
-} catch (error) {
-  throw new Error(`Invalid Supabase URL format: ${cleanUrl}. URL must be a valid URL starting with http:// or https://`)
-}
-
-if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+// Simple validation - just check if it starts with https:// or http://
+if (!cleanUrl.startsWith('https://') && !cleanUrl.startsWith('http://')) {
   throw new Error(`Invalid Supabase URL format: ${cleanUrl}. URL must start with http:// or https://`)
 }
 
