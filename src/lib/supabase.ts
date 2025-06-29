@@ -9,17 +9,17 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ||
 
 // Validate environment variables
 if (!supabaseUrl) {
-  throw new Error('Missing Supabase URL. Please set VITE_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY in your .env file')
+  throw new Error('Missing Supabase URL. Please set VITE_SUPABASE_URL or PUBLIC_SUPABASE_URL in your .env file')
 }
 
 if (!supabaseAnonKey) {
   throw new Error('Missing Supabase anonymous key. Please set VITE_SUPABASE_ANON_KEY or PUBLIC_SUPABASE_ANON_KEY in your .env file')
 }
 
-// Clean the URL - remove any whitespace, quotes, and trailing slashes
-const cleanUrl = supabaseUrl.trim().replace(/^["']|["']$/g, '').replace(/\/$/, '')
+// Clean the URL - remove any whitespace and quotes
+const cleanUrl = supabaseUrl.trim().replace(/^["']|["']$/g, '')
 
-// Validate URL format with better error handling
+// Validate URL format
 let validatedUrl: string
 try {
   const urlObj = new URL(cleanUrl)
@@ -31,11 +31,6 @@ try {
     error: error instanceof Error ? error.message : 'Unknown error'
   })
   throw new Error(`Invalid Supabase URL format: "${cleanUrl}". Please ensure it's a valid URL starting with https://`)
-}
-
-// Additional check for Supabase-specific URL format
-if (!validatedUrl.includes('.supabase.co')) {
-  console.warn('Warning: URL does not appear to be a standard Supabase URL:', validatedUrl)
 }
 
 export const supabase = createClient(validatedUrl, supabaseAnonKey)

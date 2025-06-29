@@ -11,7 +11,7 @@ export async function getStaticPaths() {
   const { data: posts } = await supabase
     .from('posts')
     .select('slug')
-    .eq('status', 'published');
+    .eq('published', true);
 
   return (posts || []).map((post) => ({
     params: { slug: post.slug },
@@ -34,7 +34,7 @@ const { data: posts } = await supabase
     )
   `)
   .eq('slug', slug)
-  .eq('status', 'published')
+  .eq('published', true)
   .limit(1);
 
 const post = posts?.[0];
@@ -58,14 +58,14 @@ const { data: relatedPostsData } = await supabase
   `)
   .eq('category_id', post.category_id)
   .neq('id', post.id)
-  .eq('status', 'published')
+  .eq('published', true)
   .limit(3);
 
 // Get popular posts for sidebar
 const { data: popularPostsData } = await supabase
   .from('posts')
   .select('*')
-  .eq('status', 'published')
+  .eq('published', true)
   .order('view_count', { ascending: false })
   .limit(4);
 

@@ -44,7 +44,7 @@ const { data: posts } = await supabase
     )
   `)
   .eq('category_id', category.id)
-  .eq('status', 'published')
+  .eq('published', true)
   .order('created_at', { ascending: false });
 
 const { data: allCategories } = await supabase
