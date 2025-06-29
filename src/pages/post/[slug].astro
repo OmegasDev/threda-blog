@@ -5,33 +5,75 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PostCard from '../../components/PostCard.astro';
 import AdPlacement from '../../components/AdPlacement.astro';
-import { dummyPosts } from '../../lib/dummyData';
+import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
-  // Use dummy data for now - replace with Supabase query when ready
-  const posts = dummyPosts;
+  const { data: posts } = await supabase
+    .from('posts')
+    .select('slug')
+    .eq('status', 'published');
 
-  return posts.map((post) => ({
+  return (posts || []).map((post) => ({
     params: { slug: post.slug },
   }));
 }
 
 const { slug } = Astro.params;
 
-// Find the post - replace with Supabase query when ready
-const post = dummyPosts.find(p => p.slug === slug);
+// Find the post from Supabase
+const { data: posts } = await supabase
+  .from('posts')
+  .select(`
+    *,
+    categories (
+      id,
+      name,
+      slug,
+      color,
+      description
+    )
+  `)
+  .eq('slug', slug)
+  .eq('status', 'published')
+  .limit(1);
+
+const post = posts?.[0];
 
 if (!post) {
   return Astro.redirect('/404');
 }
 
-// Get related posts - replace with Supabase query when ready
-const relatedPosts = dummyPosts
-  .filter(p => p.category_id === post.category_id && p.id !== post.id)
-  .slice(0, 3);
+// Get related posts from Supabase
+const { data: relatedPostsData } = await supabase
+  .from('posts')
+  .select(`
+    *,
+    categories (
+      id,
+      name,
+      slug,
+      color,
+      description
+    )
+  `)
+  .eq('category_id', post.category_id)
+  .neq('id', post.id)
+  .eq('status', 'published')
+  .limit(3);
+
+// Get popular posts for sidebar
+const { data: popularPostsData } = await supabase
+  .from('posts')
+  .select('*')
+  .eq('status', 'published')
+  .order('view_count', { ascending: false })
+  .limit(4);
+
+const relatedPosts = relatedPostsData || [];
+const popularPosts = popularPostsData || [];
 
 const formattedDate = format(new Date(post.created_at), 'MMMM dd, yyyy');
-const readingTime = Math.ceil(post.content.split(' ').length / 200);
+const readingTime = Math.ceil((post.content || '').split(' ').length / 200);
 ---
 
 <Layout 
@@ -59,13 +101,13 @@ const readingTime = Math.ceil(post.content.split(' ').length / 200);
             <nav class="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
               <a href="/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Home</a>
               <span>/</span>
-              {post.category && (
+              {post.categories && (
                 <>
                   <a 
-                    href={`/category/${post.category.slug}`} 
+                    href={`/category/${post.categories.slug}`} 
                     class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                   >
-                    {post.category.name}
+                    {post.categories.name}
                   </a>
                   <span>/</span>
                 </>
@@ -73,14 +115,14 @@ const readingTime = Math.ceil(post.content.split(' ').length / 200);
               <span class="text-slate-400 dark:text-slate-500 truncate">{post.title}</span>
             </nav>
 
-            {post.category && (
+            {post.categories && (
               <div class="mb-4">
                 <a 
-                  href={`/category/${post.category.slug}`}
+                  href={`/category/${post.categories.slug}`}
                   class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-white hover:opacity-90 transition-opacity"
-                  style={`background-color: ${post.category.color}`}
+                  style={`background-color: ${post.categories.color}`}
                 >
-                  {post.category.name}
+                  {post.categories.name}
                 </a>
               </div>
             )}
@@ -107,9 +149,9 @@ const readingTime = Math.ceil(post.content.split(' ').length / 200);
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                 </svg>
-                <span class="text-sm">{post.view_count.toLocaleString()} views</span>
+                <span class="text-sm">{(post.view_count || 0).toLocaleString()} views</span>
               </div>
-              {post.trending_score > 50 && (
+              {(post.trending_score || 0) > 50 && (
                 <div class="flex items-center space-x-2 text-red-500 font-medium">
                   <span>🔥</span>
                   <span class="text-sm">Trending</span>
@@ -127,9 +169,11 @@ const readingTime = Math.ceil(post.content.split(' ').length / 200);
               </div>
             )}
             
-            <div class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-8 font-medium border-l-4 border-primary-500 pl-4 bg-primary-50 dark:bg-primary-900/20 py-4 rounded-r-lg">
-              {post.excerpt}
-            </div>
+            {post.excerpt && (
+              <div class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-8 font-medium border-l-4 border-primary-500 pl-4 bg-primary-50 dark:bg-primary-900/20 py-4 rounded-r-lg">
+                {post.excerpt}
+              </div>
+            )}
           </header>
 
           <!-- In-Article Ad -->
@@ -139,7 +183,7 @@ const readingTime = Math.ceil(post.content.split(' ').length / 200);
 
           <!-- Article Content -->
           <div class="prose prose-lg prose-slate dark:prose-invert max-w-none mb-8">
-            <div set:html={post.content}></div>
+            <div set:html={post.content || ''}></div>
           </div>
 
           <!-- Bottom Article Ad -->
@@ -203,7 +247,7 @@ const readingTime = Math.ceil(post.content.split(' ').length / 200);
             <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-cream-200 dark:border-slate-700">
               <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Popular Articles</h3>
               <div class="space-y-4">
-                {dummyPosts.slice(0, 4).map((popularPost, index) => (
+                {popularPosts.slice(0, 4).map((popularPost, index) => (
                   <div class="flex items-start space-x-3 group">
                     <span class="flex-shrink-0 w-6 h-6 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full flex items-center justify-center text-sm font-bold">
                       {index + 1}
@@ -213,7 +257,7 @@ const readingTime = Math.ceil(post.content.split(' ').length / 200);
                         {popularPost.title}
                       </a>
                       <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                        {popularPost.view_count.toLocaleString()} views
+                        {(popularPost.view_count || 0).toLocaleString()} views
                       </p>
                     </div>
                   </div>

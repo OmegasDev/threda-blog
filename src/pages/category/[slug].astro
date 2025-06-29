@@ -4,24 +4,55 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PostCard from '../../components/PostCard.astro';
 import AdPlacement from '../../components/AdPlacement.astro';
-import { dummyPosts, dummyCategories } from '../../lib/dummyData';
+import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
-  const categories = dummyCategories;
-  return categories.map((category) => ({
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('slug');
+  
+  return (categories || []).map((category) => ({
     params: { slug: category.slug },
   }));
 }
 
 const { slug } = Astro.params;
-const category = dummyCategories.find(c => c.slug === slug);
+
+// Fetch category and its posts from Supabase
+const { data: categories } = await supabase
+  .from('categories')
+  .select('*')
+  .eq('slug', slug)
+  .limit(1);
+
+const category = categories?.[0];
 
 if (!category) {
   return Astro.redirect('/404');
 }
 
-// Filter posts by category
-const categoryPosts = dummyPosts.filter(post => post.category_id === category.id);
+const { data: posts } = await supabase
+  .from('posts')
+  .select(`
+    *,
+    categories (
+      id,
+      name,
+      slug,
+      color,
+      description
+    )
+  `)
+  .eq('category_id', category.id)
+  .eq('status', 'published')
+  .order('created_at', { ascending: false });
+
+const { data: allCategories } = await supabase
+  .from('categories')
+  .select('*')
+  .order('name');
+
+const categoryPosts = posts || [];
 const featuredPost = categoryPosts[0];
 const otherPosts = categoryPosts.slice(1);
 ---
@@ -96,7 +127,7 @@ const otherPosts = categoryPosts.slice(1);
               <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-cream-200 dark:border-slate-700">
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Explore Other Topics</h3>
                 <div class="space-y-3">
-                  {dummyCategories.filter(c => c.id !== category.id).map((otherCategory) => (
+                  {(allCategories || []).filter(c => c.id !== category.id).map((otherCategory) => (
                     <a 
                       href={`/category/${otherCategory.slug}`}
                       class="flex items-center p-3 rounded-lg hover:bg-cream-50 dark:hover:bg-slate-700 transition-colors group"
