@@ -9,6 +9,26 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ||
                        import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
                        ''
 
+// Clean and normalize the URL
+function cleanSupabaseUrl(url: string): string {
+  if (!url) return '';
+  
+  // Remove any trailing slashes and whitespace
+  let cleanUrl = url.trim().replace(/\/+$/, '');
+  
+  // Remove any path segments that might have been accidentally included
+  try {
+    const urlObj = new URL(cleanUrl);
+    // Only keep the protocol and hostname, remove any paths
+    cleanUrl = `${urlObj.protocol}//${urlObj.hostname}`;
+  } catch {
+    // If URL parsing fails, return the trimmed version
+    return cleanUrl;
+  }
+  
+  return cleanUrl;
+}
+
 // More robust URL validation
 function isValidSupabaseUrl(url: string): boolean {
   if (!url || typeof url !== 'string') return false;
@@ -23,25 +43,28 @@ function isValidSupabaseUrl(url: string): boolean {
   }
 }
 
+// Clean the URL before validation
+const cleanedUrl = cleanSupabaseUrl(supabaseUrl);
+
 // Check if we're in development mode (no Supabase configured)
-const isDevelopment = !supabaseUrl || 
+const isDevelopment = !cleanedUrl || 
                      !supabaseAnonKey || 
-                     supabaseUrl.includes('your-project-id') || 
+                     cleanedUrl.includes('your-project-id') || 
                      supabaseAnonKey.includes('your-anon-key') ||
-                     !isValidSupabaseUrl(supabaseUrl);
+                     !isValidSupabaseUrl(cleanedUrl);
 
 let supabase: any = null;
 
 if (!isDevelopment) {
   try {
-    const trimmedUrl = supabaseUrl.trim();
     const trimmedKey = supabaseAnonKey.trim();
     
-    if (isValidSupabaseUrl(trimmedUrl) && trimmedKey.length > 0) {
-      supabase = createClient(trimmedUrl, trimmedKey);
+    if (isValidSupabaseUrl(cleanedUrl) && trimmedKey.length > 0) {
+      supabase = createClient(cleanedUrl, trimmedKey);
       console.log('✅ Supabase connected successfully');
     } else {
       console.warn('⚠️ Invalid Supabase URL or key format, using dummy data');
+      console.warn('URL:', cleanedUrl);
     }
   } catch (error) {
     console.warn('⚠️ Supabase configuration error:', error);
