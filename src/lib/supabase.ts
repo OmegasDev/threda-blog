@@ -9,55 +9,44 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ||
                        import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
                        ''
 
-// Clean and normalize the URL
-function cleanSupabaseUrl(url: string): string {
-  if (!url) return '';
-  
-  // Remove any trailing slashes and whitespace
-  let cleanUrl = url.trim().replace(/\/+$/, '');
-  
-  // If it's already a valid URL format, return it as is
-  if (cleanUrl.startsWith('https://') && cleanUrl.includes('.supabase.co')) {
-    return cleanUrl;
-  }
-  
-  return cleanUrl;
-}
-
-// More robust URL validation
+// Simple URL validation without using URL constructor
 function isValidSupabaseUrl(url: string): boolean {
   if (!url || typeof url !== 'string') return false;
   
   const trimmedUrl = url.trim();
   
-  // Basic format check without URL constructor to avoid errors
+  // Basic format check
   return trimmedUrl.startsWith('https://') && 
          trimmedUrl.includes('.supabase.co') &&
-         trimmedUrl.length > 'https://.supabase.co'.length;
+         trimmedUrl.length > 'https://.supabase.co'.length &&
+         !trimmedUrl.includes('your-project-id');
 }
 
-// Clean the URL before validation
+// Clean the URL
+function cleanSupabaseUrl(url: string): string {
+  if (!url) return '';
+  return url.trim().replace(/\/+$/, '');
+}
+
 const cleanedUrl = cleanSupabaseUrl(supabaseUrl);
+const cleanedKey = supabaseAnonKey.trim();
 
 // Check if we're in development mode (no Supabase configured)
 const isDevelopment = !cleanedUrl || 
-                     !supabaseAnonKey || 
+                     !cleanedKey || 
                      cleanedUrl.includes('your-project-id') || 
-                     supabaseAnonKey.includes('your-anon-key') ||
+                     cleanedKey.includes('your-anon-key') ||
                      !isValidSupabaseUrl(cleanedUrl);
 
 let supabase: any = null;
 
 if (!isDevelopment) {
   try {
-    const trimmedKey = supabaseAnonKey.trim();
-    
-    if (isValidSupabaseUrl(cleanedUrl) && trimmedKey.length > 0) {
-      supabase = createClient(cleanedUrl, trimmedKey);
+    if (isValidSupabaseUrl(cleanedUrl) && cleanedKey.length > 0) {
+      supabase = createClient(cleanedUrl, cleanedKey);
       console.log('✅ Supabase connected successfully');
     } else {
       console.warn('⚠️ Invalid Supabase URL or key format, using dummy data');
-      console.warn('URL:', cleanedUrl);
     }
   } catch (error) {
     console.warn('⚠️ Supabase configuration error:', error);
