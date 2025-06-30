@@ -9,34 +9,35 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ||
                        import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
                        ''
 
-// For development, use dummy data if Supabase is not configured
-const isDevelopment = !supabaseUrl || !supabaseAnonKey || 
+// Check if we're in development mode (no Supabase configured)
+const isDevelopment = !supabaseUrl || 
+                     !supabaseAnonKey || 
                      supabaseUrl.includes('your-project-id') || 
-                     supabaseAnonKey.includes('your-anon-key');
+                     supabaseAnonKey.includes('your-anon-key') ||
+                     supabaseUrl === '' ||
+                     supabaseAnonKey === '';
 
 let supabase: any = null;
 
 if (!isDevelopment) {
   try {
-    // Validate URL format only if not in development mode and URL exists
-    if (supabaseUrl && supabaseUrl.trim()) {
-      // Simple URL validation without using URL constructor
-      const trimmedUrl = supabaseUrl.trim();
-      if (!trimmedUrl.startsWith('https://')) {
-        throw new Error(`Supabase URL must use HTTPS protocol. Got: ${trimmedUrl}`);
-      }
-      
+    // Simple URL validation
+    const trimmedUrl = supabaseUrl.trim();
+    if (trimmedUrl.startsWith('https://') && trimmedUrl.includes('.supabase.co')) {
       supabase = createClient(trimmedUrl, supabaseAnonKey.trim());
+      console.log('✅ Supabase connected successfully');
     } else {
-      throw new Error('Supabase URL is empty or invalid');
+      console.warn('⚠️ Invalid Supabase URL format, using dummy data');
     }
   } catch (error) {
-    console.warn('Supabase configuration error:', error);
-    console.warn('Falling back to dummy data mode');
+    console.warn('⚠️ Supabase configuration error:', error);
+    console.warn('📝 Using dummy data mode');
   }
+} else {
+  console.log('🔧 Development mode: Using dummy data (Supabase not configured)');
 }
 
-// Export a mock supabase client for development
+// Export the supabase client (will be null if not configured)
 export { supabase };
 
 export type Post = {

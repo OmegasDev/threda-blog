@@ -6,10 +6,77 @@ import PostCard from '../components/PostCard.astro';
 import AdPlacement from '../components/AdPlacement.astro';
 
 // Mock data for development
-const mockPosts = [];
+const mockPosts = [
+  {
+    id: '1',
+    title: 'Welcome to Threda - Your Real-Time News Platform',
+    slug: 'welcome-to-threda',
+    excerpt: 'Discover how Threda revolutionizes news consumption with real-time updates, community discussions, and personalized content feeds.',
+    content: '<p>Welcome to Threda, where news meets community in real-time.</p>',
+    featured_image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    published: true,
+    view_count: 1250,
+    trending_score: 85,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    updated_at: new Date().toISOString(),
+    category_id: '1',
+    categories: {
+      id: '1',
+      name: 'Technology',
+      slug: 'tech',
+      color: '#10b981',
+      description: 'Latest tech news and innovations'
+    }
+  },
+  {
+    id: '2',
+    title: 'The Future of Real-Time News Consumption',
+    slug: 'future-real-time-news',
+    excerpt: 'Explore how modern platforms are changing the way we consume and interact with news content in the digital age.',
+    content: '<p>The landscape of news consumption is rapidly evolving.</p>',
+    featured_image: 'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    published: true,
+    view_count: 890,
+    trending_score: 72,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
+    updated_at: new Date().toISOString(),
+    category_id: '2',
+    categories: {
+      id: '2',
+      name: 'Media',
+      slug: 'media',
+      color: '#8b5cf6',
+      description: 'Media industry insights and trends'
+    }
+  },
+  {
+    id: '3',
+    title: 'Building Communities Around News and Discussion',
+    slug: 'building-news-communities',
+    excerpt: 'Learn how community-driven platforms are fostering meaningful discussions around current events and trending topics.',
+    content: '<p>Community engagement is at the heart of modern news platforms.</p>',
+    featured_image: 'https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    published: true,
+    view_count: 654,
+    trending_score: 68,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
+    updated_at: new Date().toISOString(),
+    category_id: '1',
+    categories: {
+      id: '1',
+      name: 'Technology',
+      slug: 'tech',
+      color: '#10b981',
+      description: 'Latest tech news and innovations'
+    }
+  }
+];
+
 const mockCategories = [
-  { id: '1', name: 'Technology', slug: 'tech', color: '#10b981' },
-  { id: '2', name: 'Sports', slug: 'sports', color: '#8b5cf6' }
+  { id: '1', name: 'Technology', slug: 'tech', color: '#10b981', description: 'Latest tech news and innovations' },
+  { id: '2', name: 'Media', slug: 'media', color: '#8b5cf6', description: 'Media industry insights and trends' },
+  { id: '3', name: 'Business', slug: 'business', color: '#f59e0b', description: 'Business news and market insights' },
+  { id: '4', name: 'Global', slug: 'global', color: '#06b6d4', description: 'World news and international affairs' }
 ];
 
 let allPosts = mockPosts;
@@ -40,8 +107,8 @@ try {
       .select('*')
       .order('name');
 
-    if (posts) allPosts = posts;
-    if (categories) allCategories = categories;
+    if (posts && posts.length > 0) allPosts = posts;
+    if (categories && categories.length > 0) allCategories = categories;
   }
 } catch (error) {
   console.warn('Using mock data for all-posts page');
