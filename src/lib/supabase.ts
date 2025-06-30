@@ -18,13 +18,17 @@ let supabase: any = null;
 
 if (!isDevelopment) {
   try {
-    // Validate URL format only if not in development mode
-    const url = new URL(supabaseUrl.trim());
-    if (url.protocol !== 'https:') {
-      throw new Error(`Supabase URL must use HTTPS protocol. Got: ${url.protocol}`);
+    // Validate URL format only if not in development mode and URL exists
+    if (supabaseUrl && supabaseUrl.trim()) {
+      const url = new URL(supabaseUrl.trim());
+      if (url.protocol !== 'https:') {
+        throw new Error(`Supabase URL must use HTTPS protocol. Got: ${url.protocol}`);
+      }
+      
+      supabase = createClient(supabaseUrl.trim(), supabaseAnonKey.trim());
+    } else {
+      throw new Error('Supabase URL is empty or invalid');
     }
-    
-    supabase = createClient(supabaseUrl.trim(), supabaseAnonKey.trim());
   } catch (error) {
     console.warn('Supabase configuration error:', error);
     console.warn('Falling back to dummy data mode');
