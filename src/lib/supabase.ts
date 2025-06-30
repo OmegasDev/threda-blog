@@ -11,7 +11,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ||
 
 // Validate environment variables exist
 if (!supabaseUrl || supabaseUrl.trim() === '') {
-  throw new Error('Missing Supabase URL. Please set VITE_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY in your .env file')
+  throw new Error('Missing Supabase URL. Please set VITE_SUPABASE_URL or PUBLIC_SUPABASE_URL in your .env file')
 }
 
 if (!supabaseAnonKey || supabaseAnonKey.trim() === '') {
