@@ -25,7 +25,7 @@ try {
   if (url.protocol !== 'https:') {
     throw new Error(`Supabase URL must use HTTPS protocol. Got: ${url.protocol}`)
   }
-  if (!url.hostname.includes('supabase.co')) {
+  if (!url.hostname.endsWith('.supabase.co')) {
     throw new Error(`Invalid Supabase URL hostname. Expected a supabase.co domain, got: ${url.hostname}`)
   }
 } catch (error) {
