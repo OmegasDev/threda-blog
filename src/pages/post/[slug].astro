@@ -5,72 +5,167 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PostCard from '../../components/PostCard.astro';
 import AdPlacement from '../../components/AdPlacement.astro';
-import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
-  const { data: posts } = await supabase
-    .from('posts')
-    .select('slug')
-    .eq('published', true);
+  try {
+    const { supabase } = await import('../../lib/supabase');
+    
+    if (supabase) {
+      const { data: posts } = await supabase
+        .from('posts')
+        .select('slug')
+        .eq('published', true);
 
-  return (posts || []).map((post) => ({
-    params: { slug: post.slug },
-  }));
+      return (posts || []).map((post) => ({
+        params: { slug: post.slug },
+      }));
+    }
+  } catch (error) {
+    console.warn('Error fetching posts for static paths:', error);
+  }
+  
+  // Return empty array if Supabase is not configured or fails
+  return [];
 }
 
 const { slug } = Astro.params;
 
-// Find the post from Supabase
-const { data: posts } = await supabase
-  .from('posts')
-  .select(`
-    *,
-    categories (
-      id,
-      name,
-      slug,
-      color,
-      description
-    )
-  `)
-  .eq('slug', slug)
-  .eq('published', true)
-  .limit(1);
+// Mock data for development
+const mockPost = {
+  id: '1',
+  title: 'Welcome to Threda - Your Real-Time News Platform',
+  slug: 'welcome-to-threda',
+  excerpt: 'Discover how Threda revolutionizes news consumption with real-time updates, community discussions, and personalized content feeds.',
+  content: '<p>Welcome to Threda, where news meets community in real-time. This platform represents the future of news consumption, bringing together cutting-edge technology with community-driven discussions.</p><p>Our mission is to create a space where information flows freely, discussions are meaningful, and every voice matters in shaping the narrative around current events.</p>',
+  featured_image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+  published: true,
+  view_count: 1250,
+  trending_score: 85,
+  created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+  updated_at: new Date().toISOString(),
+  category_id: '1',
+  categories: {
+    id: '1',
+    name: 'Technology',
+    slug: 'tech',
+    color: '#10b981',
+    description: 'Latest tech news and innovations'
+  },
+  seo_title: 'Welcome to Threda - Your Real-Time News Platform',
+  seo_description: 'Discover how Threda revolutionizes news consumption with real-time updates, community discussions, and personalized content feeds.'
+};
 
-const post = posts?.[0];
+const mockRelatedPosts = [
+  {
+    id: '2',
+    title: 'The Future of Real-Time News Consumption',
+    slug: 'future-real-time-news',
+    excerpt: 'Explore how modern platforms are changing the way we consume and interact with news content in the digital age.',
+    featured_image: 'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    published: true,
+    view_count: 890,
+    trending_score: 72,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
+    category_id: '1',
+    categories: {
+      id: '1',
+      name: 'Technology',
+      slug: 'tech',
+      color: '#10b981',
+      description: 'Latest tech news and innovations'
+    }
+  }
+];
 
-if (!post) {
-  return Astro.redirect('/404');
+const mockPopularPosts = [
+  {
+    id: '1',
+    title: 'Welcome to Threda - Your Real-Time News Platform',
+    slug: 'welcome-to-threda',
+    view_count: 1250
+  },
+  {
+    id: '2',
+    title: 'The Future of Real-Time News Consumption',
+    slug: 'future-real-time-news',
+    view_count: 890
+  }
+];
+
+let post = null;
+let relatedPosts = mockRelatedPosts;
+let popularPosts = mockPopularPosts;
+
+try {
+  const { supabase } = await import('../../lib/supabase');
+  
+  if (supabase) {
+    // Find the post from Supabase
+    const { data: posts } = await supabase
+      .from('posts')
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          slug,
+          color,
+          description
+        )
+      `)
+      .eq('slug', slug)
+      .eq('published', true)
+      .limit(1);
+
+    post = posts?.[0];
+
+    if (post) {
+      // Get related posts from Supabase
+      const { data: relatedPostsData } = await supabase
+        .from('posts')
+        .select(`
+          *,
+          categories (
+            id,
+            name,
+            slug,
+            color,
+            description
+          )
+        `)
+        .eq('category_id', post.category_id)
+        .neq('id', post.id)
+        .eq('published', true)
+        .limit(3);
+
+      // Get popular posts for sidebar
+      const { data: popularPostsData } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('published', true)
+        .order('view_count', { ascending: false })
+        .limit(4);
+
+      if (relatedPostsData && relatedPostsData.length > 0) {
+        relatedPosts = relatedPostsData;
+      }
+      if (popularPostsData && popularPostsData.length > 0) {
+        popularPosts = popularPostsData;
+      }
+    }
+  }
+} catch (error) {
+  console.warn('Using mock data for post page');
 }
 
-// Get related posts from Supabase
-const { data: relatedPostsData } = await supabase
-  .from('posts')
-  .select(`
-    *,
-    categories (
-      id,
-      name,
-      slug,
-      color,
-      description
-    )
-  `)
-  .eq('category_id', post.category_id)
-  .neq('id', post.id)
-  .eq('published', true)
-  .limit(3);
-
-// Get popular posts for sidebar
-const { data: popularPostsData } = await supabase
-  .from('posts')
-  .select('*')
-  .eq('published', true)
-  .order('view_count', { ascending: false })
-  .limit(4);
-
-const relatedPosts = relatedPostsData || [];
-const popularPosts = popularPostsData || [];
+// Fallback to mock data if no post found
+if (!post) {
+  if (slug === 'welcome-to-threda') {
+    post = mockPost;
+  } else {
+    return Astro.redirect('/404');
+  }
+}
 
 const formattedDate = format(new Date(post.created_at), 'MMMM dd, yyyy');
 const readingTime = Math.ceil((post.content || '').split(' ').length / 200);

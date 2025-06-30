@@ -4,55 +4,124 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PostCard from '../../components/PostCard.astro';
 import AdPlacement from '../../components/AdPlacement.astro';
-import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('slug');
+  try {
+    const { supabase } = await import('../../lib/supabase');
+    
+    if (supabase) {
+      const { data: categories } = await supabase
+        .from('categories')
+        .select('slug');
+      
+      return (categories || []).map((category) => ({
+        params: { slug: category.slug },
+      }));
+    }
+  } catch (error) {
+    console.warn('Error fetching categories for static paths:', error);
+  }
   
-  return (categories || []).map((category) => ({
-    params: { slug: category.slug },
-  }));
+  // Return empty array if Supabase is not configured or fails
+  return [];
 }
 
 const { slug } = Astro.params;
 
-// Fetch category and its posts from Supabase
-const { data: categories } = await supabase
-  .from('categories')
-  .select('*')
-  .eq('slug', slug)
-  .limit(1);
+// Mock data for development
+const mockCategories = [
+  { id: '1', name: 'Technology', slug: 'tech', color: '#10b981', description: 'Latest tech news and innovations' },
+  { id: '2', name: 'Media', slug: 'media', color: '#8b5cf6', description: 'Media industry insights and trends' },
+  { id: '3', name: 'Business', slug: 'business', color: '#f59e0b', description: 'Business news and market insights' },
+  { id: '4', name: 'Global', slug: 'global', color: '#06b6d4', description: 'World news and international affairs' }
+];
 
-const category = categories?.[0];
+const mockPosts = [
+  {
+    id: '1',
+    title: 'Welcome to Threda - Your Real-Time News Platform',
+    slug: 'welcome-to-threda',
+    excerpt: 'Discover how Threda revolutionizes news consumption with real-time updates, community discussions, and personalized content feeds.',
+    content: '<p>Welcome to Threda, where news meets community in real-time.</p>',
+    featured_image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    published: true,
+    view_count: 1250,
+    trending_score: 85,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    updated_at: new Date().toISOString(),
+    category_id: '1',
+    categories: {
+      id: '1',
+      name: 'Technology',
+      slug: 'tech',
+      color: '#10b981',
+      description: 'Latest tech news and innovations'
+    }
+  }
+];
+
+let category = null;
+let categoryPosts = [];
+let allCategories = mockCategories;
+
+try {
+  const { supabase } = await import('../../lib/supabase');
+  
+  if (supabase) {
+    // Fetch category and its posts from Supabase
+    const { data: categories } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('slug', slug)
+      .limit(1);
+
+    category = categories?.[0];
+
+    if (category) {
+      const { data: posts } = await supabase
+        .from('posts')
+        .select(`
+          *,
+          categories (
+            id,
+            name,
+            slug,
+            color,
+            description
+          )
+        `)
+        .eq('category_id', category.id)
+        .eq('published', true)
+        .order('created_at', { ascending: false });
+
+      categoryPosts = posts || [];
+    }
+
+    const { data: supabaseCategories } = await supabase
+      .from('categories')
+      .select('*')
+      .order('name');
+
+    if (supabaseCategories && supabaseCategories.length > 0) {
+      allCategories = supabaseCategories;
+    }
+  }
+} catch (error) {
+  console.warn('Using mock data for category page');
+}
+
+// Fallback to mock data if no category found
+if (!category) {
+  category = mockCategories.find(c => c.slug === slug);
+  if (category) {
+    categoryPosts = mockPosts.filter(p => p.category_id === category.id);
+  }
+}
 
 if (!category) {
   return Astro.redirect('/404');
 }
 
-const { data: posts } = await supabase
-  .from('posts')
-  .select(`
-    *,
-    categories (
-      id,
-      name,
-      slug,
-      color,
-      description
-    )
-  `)
-  .eq('category_id', category.id)
-  .eq('published', true)
-  .order('created_at', { ascending: false });
-
-const { data: allCategories } = await supabase
-  .from('categories')
-  .select('*')
-  .order('name');
-
-const categoryPosts = posts || [];
 const featuredPost = categoryPosts[0];
 const otherPosts = categoryPosts.slice(1);
 ---

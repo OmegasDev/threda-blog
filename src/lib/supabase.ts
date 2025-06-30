@@ -9,25 +9,39 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ||
                        import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
                        ''
 
+// More robust URL validation
+function isValidSupabaseUrl(url: string): boolean {
+  if (!url || typeof url !== 'string') return false;
+  
+  try {
+    const urlObj = new URL(url.trim());
+    return urlObj.protocol === 'https:' && 
+           urlObj.hostname.endsWith('.supabase.co') &&
+           urlObj.hostname.length > '.supabase.co'.length;
+  } catch {
+    return false;
+  }
+}
+
 // Check if we're in development mode (no Supabase configured)
 const isDevelopment = !supabaseUrl || 
                      !supabaseAnonKey || 
                      supabaseUrl.includes('your-project-id') || 
                      supabaseAnonKey.includes('your-anon-key') ||
-                     supabaseUrl === '' ||
-                     supabaseAnonKey === '';
+                     !isValidSupabaseUrl(supabaseUrl);
 
 let supabase: any = null;
 
 if (!isDevelopment) {
   try {
-    // Simple URL validation
     const trimmedUrl = supabaseUrl.trim();
-    if (trimmedUrl.startsWith('https://') && trimmedUrl.includes('.supabase.co')) {
-      supabase = createClient(trimmedUrl, supabaseAnonKey.trim());
+    const trimmedKey = supabaseAnonKey.trim();
+    
+    if (isValidSupabaseUrl(trimmedUrl) && trimmedKey.length > 0) {
+      supabase = createClient(trimmedUrl, trimmedKey);
       console.log('✅ Supabase connected successfully');
     } else {
-      console.warn('⚠️ Invalid Supabase URL format, using dummy data');
+      console.warn('⚠️ Invalid Supabase URL or key format, using dummy data');
     }
   } catch (error) {
     console.warn('⚠️ Supabase configuration error:', error);
