@@ -11,28 +11,17 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ||
 
 // Validate environment variables exist
 if (!supabaseUrl || supabaseUrl.trim() === '') {
-  throw new Error('Missing Supabase URL. Please set VITE_SUPABASE_URL or PUBLIC_SUPABASE_URL in your .env file')
+  throw new Error('Missing Supabase URL. Please set VITE_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY in your .env file')
 }
 
 if (!supabaseAnonKey || supabaseAnonKey.trim() === '') {
   throw new Error('Missing Supabase anonymous key. Please set VITE_SUPABASE_ANON_KEY or PUBLIC_SUPABASE_ANON_KEY in your .env file')
 }
 
-// More robust URL validation
+// Simplified URL validation
 const trimmedUrl = supabaseUrl.trim()
-try {
-  const url = new URL(trimmedUrl)
-  if (url.protocol !== 'https:') {
-    throw new Error(`Supabase URL must use HTTPS protocol. Got: ${url.protocol}`)
-  }
-  if (!url.hostname.endsWith('.supabase.co')) {
-    throw new Error(`Invalid Supabase URL hostname. Expected a supabase.co domain, got: ${url.hostname}`)
-  }
-} catch (error) {
-  if (error instanceof TypeError) {
-    throw new Error(`Invalid Supabase URL format: ${trimmedUrl}. Please ensure it follows the format: https://your-project-id.supabase.co`)
-  }
-  throw error
+if (!trimmedUrl.startsWith('https://')) {
+  throw new Error(`Supabase URL must use HTTPS protocol. Got: ${trimmedUrl}`)
 }
 
 export const supabase = createClient(trimmedUrl, supabaseAnonKey)
