@@ -9,32 +9,30 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ||
                        import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
                        ''
 
-// Validate environment variables exist
-if (!supabaseUrl || supabaseUrl.trim() === '') {
-  throw new Error('Missing Supabase URL. Please set VITE_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY in your .env file')
-}
+// For development, use dummy data if Supabase is not configured
+const isDevelopment = !supabaseUrl || !supabaseAnonKey || 
+                     supabaseUrl.includes('your-project-id') || 
+                     supabaseAnonKey.includes('your-anon-key');
 
-if (!supabaseAnonKey || supabaseAnonKey.trim() === '') {
-  throw new Error('Missing Supabase anonymous key. Please set VITE_SUPABASE_ANON_KEY or PUBLIC_SUPABASE_ANON_KEY in your .env file')
-}
+let supabase: any = null;
 
-// Clean and validate URL
-const trimmedUrl = supabaseUrl.trim()
-
-// More robust URL validation
-try {
-  const url = new URL(trimmedUrl)
-  if (url.protocol !== 'https:') {
-    throw new Error(`Supabase URL must use HTTPS protocol. Got: ${url.protocol}`)
+if (!isDevelopment) {
+  try {
+    // Validate URL format only if not in development mode
+    const url = new URL(supabaseUrl.trim());
+    if (url.protocol !== 'https:') {
+      throw new Error(`Supabase URL must use HTTPS protocol. Got: ${url.protocol}`);
+    }
+    
+    supabase = createClient(supabaseUrl.trim(), supabaseAnonKey.trim());
+  } catch (error) {
+    console.warn('Supabase configuration error:', error);
+    console.warn('Falling back to dummy data mode');
   }
-} catch (error) {
-  if (error instanceof TypeError) {
-    throw new Error(`Invalid Supabase URL format: ${trimmedUrl}`)
-  }
-  throw error
 }
 
-export const supabase = createClient(trimmedUrl, supabaseAnonKey.trim())
+// Export a mock supabase client for development
+export { supabase };
 
 export type Post = {
   id: string
@@ -43,7 +41,7 @@ export type Post = {
   content: string
   excerpt: string
   category_id: string
-  category?: Category
+  categories?: Category
   featured_image?: string
   published: boolean
   seo_title?: string

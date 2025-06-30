@@ -4,31 +4,48 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PostCard from '../components/PostCard.astro';
 import AdPlacement from '../components/AdPlacement.astro';
-import { supabase } from '../lib/supabase';
 
-// Fetch posts and categories from Supabase
-const { data: posts } = await supabase
-  .from('posts')
-  .select(`
-    *,
-    categories (
-      id,
-      name,
-      slug,
-      color,
-      description
-    )
-  `)
-  .eq('published', true)
-  .order('created_at', { ascending: false });
+// Mock data for development
+const mockPosts = [];
+const mockCategories = [
+  { id: '1', name: 'Technology', slug: 'tech', color: '#10b981' },
+  { id: '2', name: 'Sports', slug: 'sports', color: '#8b5cf6' }
+];
 
-const { data: categories } = await supabase
-  .from('categories')
-  .select('*')
-  .order('name');
+let allPosts = mockPosts;
+let allCategories = mockCategories;
 
-const allPosts = posts || [];
-const allCategories = categories || [];
+try {
+  const { supabase } = await import('../lib/supabase');
+  
+  if (supabase) {
+    // Fetch posts and categories from Supabase
+    const { data: posts } = await supabase
+      .from('posts')
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          slug,
+          color,
+          description
+        )
+      `)
+      .eq('published', true)
+      .order('created_at', { ascending: false });
+
+    const { data: categories } = await supabase
+      .from('categories')
+      .select('*')
+      .order('name');
+
+    if (posts) allPosts = posts;
+    if (categories) allCategories = categories;
+  }
+} catch (error) {
+  console.warn('Using mock data for all-posts page');
+}
 ---
 
 <Layout 
