@@ -8,12 +8,23 @@ const { position, className = "" } = Astro.props;
 
 import { supabase } from '../lib/supabase';
 
-const { data: ad } = await supabase
-  .from('ad_placements')
-  .select('*')
-  .eq('position', position)
-  .eq('active', true)
-  .single();
+let ad = null;
+
+// Only query Supabase if the client is properly initialized
+if (supabase) {
+  try {
+    const { data } = await supabase
+      .from('ad_placements')
+      .select('*')
+      .eq('position', position)
+      .eq('active', true)
+      .single();
+    ad = data;
+  } catch (error) {
+    console.warn('Failed to fetch ad placement:', error);
+    ad = null;
+  }
+}
 ---
 
 {ad && (
