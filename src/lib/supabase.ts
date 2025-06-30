@@ -16,13 +16,8 @@ function cleanSupabaseUrl(url: string): string {
   // Remove any trailing slashes and whitespace
   let cleanUrl = url.trim().replace(/\/+$/, '');
   
-  // Remove any path segments that might have been accidentally included
-  try {
-    const urlObj = new URL(cleanUrl);
-    // Only keep the protocol and hostname, remove any paths
-    cleanUrl = `${urlObj.protocol}//${urlObj.hostname}`;
-  } catch {
-    // If URL parsing fails, return the trimmed version
+  // If it's already a valid URL format, return it as is
+  if (cleanUrl.startsWith('https://') && cleanUrl.includes('.supabase.co')) {
     return cleanUrl;
   }
   
@@ -33,14 +28,12 @@ function cleanSupabaseUrl(url: string): string {
 function isValidSupabaseUrl(url: string): boolean {
   if (!url || typeof url !== 'string') return false;
   
-  try {
-    const urlObj = new URL(url.trim());
-    return urlObj.protocol === 'https:' && 
-           urlObj.hostname.endsWith('.supabase.co') &&
-           urlObj.hostname.length > '.supabase.co'.length;
-  } catch {
-    return false;
-  }
+  const trimmedUrl = url.trim();
+  
+  // Basic format check without URL constructor to avoid errors
+  return trimmedUrl.startsWith('https://') && 
+         trimmedUrl.includes('.supabase.co') &&
+         trimmedUrl.length > 'https://.supabase.co'.length;
 }
 
 // Clean the URL before validation
