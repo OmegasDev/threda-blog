@@ -1,0 +1,110 @@
+/* empty css                                 */
+import { f as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead, h as addAttribute } from '../chunks/astro/server_DOaDwOgE.mjs';
+import 'kleur/colors';
+import { $ as $$Layout } from '../chunks/Layout_C6YbK03H.mjs';
+import { e as dummyThreds, h as getBreakingThreds, j as getTrendingThreds, c as getTrendingHubs, $ as $$Header, a as $$Footer } from '../chunks/Footer_DvAPT5_I.mjs';
+import { $ as $$ThredCard } from '../chunks/ThredCard_DGLCdRtO.mjs';
+import { $ as $$HubCard } from '../chunks/HubCard_I6yQ4S03.mjs';
+export { renderers } from '../renderers.mjs';
+
+const $$Index = createComponent(($$result, $$props, $$slots) => {
+  const allThreds = dummyThreds.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const breakingThreds = getBreakingThreds();
+  const trendingThreds = getTrendingThreds();
+  const trendingHubs = getTrendingHubs();
+  const featuredThred = allThreds[0];
+  const recentThreds = allThreds.slice(1, 9);
+  const userCreatedHubs = [
+    {
+      id: "1",
+      name: "AI Innovations",
+      slug: "ai-innovations",
+      description: "Latest breakthroughs in artificial intelligence and machine learning",
+      category: "Tech",
+      follower_count: 1250,
+      post_count: 45,
+      total_views: 15600,
+      created_at: new Date(Date.now() - 1e3 * 60 * 60 * 24 * 7).toISOString(),
+      is_public: true
+    },
+    {
+      id: "2",
+      name: "Crypto Trading Hub",
+      slug: "crypto-trading",
+      description: "Real-time crypto market analysis and trading strategies",
+      category: "Crypto",
+      follower_count: 2340,
+      post_count: 78,
+      total_views: 32400,
+      created_at: new Date(Date.now() - 1e3 * 60 * 60 * 24 * 14).toISOString(),
+      is_public: true
+    },
+    {
+      id: "3",
+      name: "Nigerian Startups",
+      slug: "nigerian-startups",
+      description: "Covering the booming startup ecosystem in Nigeria",
+      category: "Business",
+      follower_count: 890,
+      post_count: 32,
+      total_views: 12300,
+      created_at: new Date(Date.now() - 1e3 * 60 * 60 * 24 * 5).toISOString(),
+      is_public: true
+    },
+    {
+      id: "4",
+      name: "DeFi Watch",
+      slug: "defi-watch",
+      description: "Decentralized finance news, protocols, and opportunities",
+      category: "Finance",
+      follower_count: 1560,
+      post_count: 56,
+      total_views: 21800,
+      created_at: new Date(Date.now() - 1e3 * 60 * 60 * 24 * 10).toISOString(),
+      is_public: true
+    }
+  ];
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Threda - Stay in the Loop" }, { "default": ($$result2) => renderTemplate` ${renderComponent($$result2, "Header", $$Header, {})} ${maybeRenderHead()}<main class="min-h-screen bg-slate-50 dark:bg-slate-900"> <!-- Breaking News Banner --> ${breakingThreds.length > 0 && renderTemplate`<section class="bg-red-500 text-white py-2"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex items-center justify-center space-x-4"> <span class="flex items-center space-x-2 font-bold text-sm"> <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span> <span>BREAKING</span> </span> <div class="flex-1 max-w-4xl"> <a${addAttribute(`/thred/${breakingThreds[0].slug}`, "href")} class="hover:underline"> <span class="text-sm md:text-base">${breakingThreds[0].title}</span> </a> </div> </div> </div> </section>`} <!-- Hero Section --> <section class="relative bg-gradient-to-br from-primary-50 via-white to-primary-100 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 py-12 lg:py-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <div class="mb-6"> <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 border border-primary-200 dark:border-primary-800"> <span class="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
+Live News Feed
+</span> </div> <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-slate-900 via-primary-800 to-slate-900 dark:from-white dark:via-primary-300 dark:to-white bg-clip-text text-transparent leading-tight">
+Stay in
+<span class="block bg-gradient-to-r from-primary-600 to-primary-800 dark:from-primary-400 dark:to-primary-600 bg-clip-text text-transparent">
+The Loop
+</span> </h1> <p class="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+Real-time news and community discussions. Get the latest threds across tech, global events, and trending topics.
+</p> <!-- Quick Hub Access --> <div class="flex flex-wrap justify-center gap-3 mb-8"> ${trendingHubs.slice(0, 6).map((hub) => renderTemplate`<a${addAttribute(`/hub/${hub.slug}`, "href")} class="group px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-300 hover:shadow-lg hover:scale-105"> <span class="mr-2">${hub.icon}</span> <span class="text-slate-700 dark:text-slate-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 font-medium text-sm"> ${hub.name} </span> <span class="ml-2 text-xs text-slate-500 dark:text-slate-400"> ${hub.thredCount} </span> </a>`)} </div> </div> </div> </section> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"> <div class="grid grid-cols-1 lg:grid-cols-4 gap-8"> <!-- Main Feed --> <div class="lg:col-span-3"> <!-- User-Created Hubs Section --> <section class="mb-12"> <div class="flex items-center justify-between mb-6"> <div class="flex items-center space-x-3"> <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center"> <span class="text-lg">🌟</span> </div> <div> <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Community Hubs</h2> <p class="text-sm text-slate-500 dark:text-slate-400">Discover user-created communities</p> </div> </div> <a href="/hubs" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm transition-colors">
+View all →
+</a> </div> <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> ${userCreatedHubs.slice(0, 4).map((hub, index) => renderTemplate`<div class="animate-slide-up"${addAttribute(`animation-delay: ${index * 0.1}s`, "style")}> ${renderComponent($$result2, "HubCard", $$HubCard, { "hub": hub, "showFollowButton": true })} </div>`)} </div> </section> <!-- Featured Thred --> ${featuredThred && renderTemplate`<section class="mb-12"> <div class="flex items-center justify-between mb-6"> <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Featured Drop</h2> <span class="text-sm text-slate-500 dark:text-slate-400">Most engaging thred</span> </div> ${renderComponent($$result2, "ThredCard", $$ThredCard, { "thred": featuredThred, "variant": "hero" })} </section>`} <!-- Trending Threds --> ${trendingThreds.length > 0 && renderTemplate`<section class="mb-12"> <div class="flex items-center justify-between mb-6"> <div class="flex items-center space-x-3"> <div class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center"> <span class="text-lg">🔥</span> </div> <div> <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Trending Now</h2> <p class="text-sm text-slate-500 dark:text-slate-400">Hot topics in the loop</p> </div> </div> </div> <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> ${trendingThreds.slice(0, 4).map((thred, index) => renderTemplate`<div class="animate-slide-up"${addAttribute(`animation-delay: ${index * 0.1}s`, "style")}> ${renderComponent($$result2, "ThredCard", $$ThredCard, { "thred": thred })} </div>`)} </div> </section>`} <!-- Latest Threds --> <section> <div class="flex items-center justify-between mb-6"> <div> <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Latest Drops</h2> <p class="text-sm text-slate-500 dark:text-slate-400">Fresh threds from the community</p> </div> <button class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm transition-colors">
+Load more threds
+</button> </div> <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> ${recentThreds.map((thred, index) => renderTemplate`<div class="animate-slide-up"${addAttribute(`animation-delay: ${(index + 1) * 0.05}s`, "style")}> ${renderComponent($$result2, "ThredCard", $$ThredCard, { "thred": thred })} </div>`)} </div> </section> <!-- Create Hub CTA --> <section class="mt-16 bg-gradient-to-r from-primary-600 to-primary-800 rounded-3xl p-8 lg:p-12 text-white text-center"> <h2 class="text-3xl font-bold mb-4">Ready to Start Your Own Hub?</h2> <p class="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+Create a community around topics you're passionate about and connect with like-minded people.
+</p> <a href="/create-hub" class="inline-flex items-center px-8 py-4 bg-white text-primary-700 font-semibold rounded-xl hover:bg-primary-50 transition-colors duration-200"> <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path> </svg>
+Create Your Hub
+</a> </section> </div> <!-- Sidebar - Discover Loops --> <div class="lg:col-span-1"> <div class="sticky top-24 space-y-6"> <!-- Trending Hubs --> <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700"> <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center"> <span class="mr-2">🚀</span>
+Discover Loops
+</h3> <div class="space-y-3"> ${trendingHubs.map((hub) => renderTemplate`<a${addAttribute(`/hub/${hub.slug}`, "href")} class="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors group"> <div class="flex items-center"> <span class="text-2xl mr-3">${hub.icon}</span> <div> <span class="text-slate-700 dark:text-slate-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 font-medium block"> ${hub.name} </span> <span class="text-xs text-slate-500 dark:text-slate-400"> ${hub.followerCount.toLocaleString()} followers
+</span> </div> </div> <div class="text-right"> <div class="text-sm font-medium text-slate-900 dark:text-white"> ${hub.thredCount} </div> <div class="text-xs text-slate-500 dark:text-slate-400">threds</div> </div> </a>`)} </div> <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700"> <a href="/hubs" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium">
+Explore all hubs →
+</a> </div> </div> <!-- Loop Score Leaderboard --> <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700"> <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center"> <span class="mr-2">⚡</span>
+Top Loop Scores
+</h3> <div class="space-y-3"> ${allThreds.sort((a, b) => b.loopScore - a.loopScore).slice(0, 5).map((thred, index) => renderTemplate`<div class="flex items-start space-x-3"> <span class="flex-shrink-0 w-6 h-6 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full flex items-center justify-center text-sm font-bold"> ${index + 1} </span> <div class="flex-1 min-w-0"> <a${addAttribute(`/thred/${thred.slug}`, "href")} class="text-sm font-medium text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors line-clamp-2"> ${thred.title} </a> <div class="flex items-center space-x-2 mt-1"> <span class="text-xs text-primary-600 dark:text-primary-400 font-bold">
+⚡ ${thred.loopScore} </span> <span class="text-xs text-slate-500 dark:text-slate-400"> ${thred.hub?.icon} ${thred.hub?.name} </span> </div> </div> </div>`)} </div> </div> <!-- Quick Actions --> <div class="bg-gradient-to-br from-primary-600 to-primary-800 rounded-2xl p-6 text-white"> <h3 class="text-lg font-bold mb-3">Join the Loop</h3> <p class="text-primary-100 text-sm mb-4">
+Get notified when hot threds drop in your favorite hubs.
+</p> <a href="/create-hub" class="block w-full bg-white text-primary-700 font-semibold py-2 rounded-lg text-sm hover:bg-primary-50 transition-colors text-center">
+Create Hub
+</a> </div> </div> </div> </div> </div> </main> ${renderComponent($$result2, "Footer", $$Footer, {})} ` })}`;
+}, "/home/project/src/pages/index.astro", void 0);
+
+const $$file = "/home/project/src/pages/index.astro";
+const $$url = "";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$Index,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
