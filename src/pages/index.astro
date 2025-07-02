@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ThredCard from '../components/ThredCard.astro';
+import HubCard from '../components/HubCard.astro';
 import { dummyThreds, dummyHubs, getBreakingThreds, getTrendingThreds, getTrendingHubs } from '../lib/dummyData';
 
 // Use dummy data for now - replace with n8n/Supabase queries when ready
@@ -12,6 +13,58 @@ const trendingThreds = getTrendingThreds();
 const trendingHubs = getTrendingHubs();
 const featuredThred = allThreds[0];
 const recentThreds = allThreds.slice(1, 9);
+
+// Mock user-created hubs data
+const userCreatedHubs = [
+  {
+    id: '1',
+    name: 'AI Innovations',
+    slug: 'ai-innovations',
+    description: 'Latest breakthroughs in artificial intelligence and machine learning',
+    category: 'Tech',
+    follower_count: 1250,
+    post_count: 45,
+    total_views: 15600,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
+    is_public: true
+  },
+  {
+    id: '2',
+    name: 'Crypto Trading Hub',
+    slug: 'crypto-trading',
+    description: 'Real-time crypto market analysis and trading strategies',
+    category: 'Crypto',
+    follower_count: 2340,
+    post_count: 78,
+    total_views: 32400,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14).toISOString(),
+    is_public: true
+  },
+  {
+    id: '3',
+    name: 'Nigerian Startups',
+    slug: 'nigerian-startups',
+    description: 'Covering the booming startup ecosystem in Nigeria',
+    category: 'Business',
+    follower_count: 890,
+    post_count: 32,
+    total_views: 12300,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
+    is_public: true
+  },
+  {
+    id: '4',
+    name: 'DeFi Watch',
+    slug: 'defi-watch',
+    description: 'Decentralized finance news, protocols, and opportunities',
+    category: 'Finance',
+    follower_count: 1560,
+    post_count: 56,
+    total_views: 21800,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10).toISOString(),
+    is_public: true
+  }
+];
 ---
 
 <Layout title="Threda - Stay in the Loop">
@@ -84,6 +137,35 @@ const recentThreds = allThreds.slice(1, 9);
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <!-- Main Feed -->
         <div class="lg:col-span-3">
+          <!-- User-Created Hubs Section -->
+          <section class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                  <span class="text-lg">🌟</span>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Community Hubs</h2>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">Discover user-created communities</p>
+                </div>
+              </div>
+              <a 
+                href="/hubs" 
+                class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm transition-colors"
+              >
+                View all →
+              </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {userCreatedHubs.slice(0, 4).map((hub, index) => (
+                <div class="animate-slide-up" style={`animation-delay: ${index * 0.1}s`}>
+                  <HubCard hub={hub} showFollowButton={true} />
+                </div>
+              ))}
+            </div>
+          </section>
+
           <!-- Featured Thred -->
           {featuredThred && (
             <section class="mb-12">
@@ -139,6 +221,23 @@ const recentThreds = allThreds.slice(1, 9);
                 </div>
               ))}
             </div>
+          </section>
+
+          <!-- Create Hub CTA -->
+          <section class="mt-16 bg-gradient-to-r from-primary-600 to-primary-800 rounded-3xl p-8 lg:p-12 text-white text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready to Start Your Own Hub?</h2>
+            <p class="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+              Create a community around topics you're passionate about and connect with like-minded people.
+            </p>
+            <a 
+              href="/create-hub"
+              class="inline-flex items-center px-8 py-4 bg-white text-primary-700 font-semibold rounded-xl hover:bg-primary-50 transition-colors duration-200"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Create Your Hub
+            </a>
           </section>
         </div>
         
@@ -220,9 +319,12 @@ const recentThreds = allThreds.slice(1, 9);
               <p class="text-primary-100 text-sm mb-4">
                 Get notified when hot threds drop in your favorite hubs.
               </p>
-              <button class="w-full bg-white text-primary-700 font-semibold py-2 rounded-lg text-sm hover:bg-primary-50 transition-colors" onclick="alert('Thred creation coming soon!')">
-                Thred it now
-              </button>
+              <a 
+                href="/create-hub"
+                class="block w-full bg-white text-primary-700 font-semibold py-2 rounded-lg text-sm hover:bg-primary-50 transition-colors text-center"
+              >
+                Create Hub
+              </a>
             </div>
           </div>
         </div>
