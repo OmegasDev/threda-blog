@@ -17,7 +17,7 @@ const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -47,15 +47,31 @@ const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Theme -->
+    <!-- Theme Script - Set dark mode as default -->
     <script is:inline>
-      // Prevent flash of unstyled content
+      // Set dark mode as default and prevent flash
       (function() {
         const theme = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
-        if (theme === 'dark' || (!theme && prefersDark)) {
+        // Default to dark mode
+        if (!theme) {
           document.documentElement.classList.add('dark');
+        } else if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        
+        // Show theme modal after 5 seconds if not seen before
+        if (!localStorage.getItem('themeModalSeen')) {
+          setTimeout(() => {
+            const modal = document.getElementById('theme-preference-modal');
+            if (modal) {
+              modal.classList.remove('hidden');
+              modal.classList.add('flex');
+            }
+          }, 5000);
         }
       })();
     </script>
@@ -80,6 +96,65 @@ const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site);
     </script>
   </head>
   <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
+    <!-- Theme Preference Modal -->
+    <div id="theme-preference-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 w-full max-w-md mx-4 border border-slate-200 dark:border-slate-700 shadow-2xl">
+        <div class="text-center mb-6">
+          <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Choose Your Theme</h3>
+          <p class="text-slate-600 dark:text-slate-400">How would you like Threda to look?</p>
+        </div>
+        
+        <div class="space-y-3">
+          <button 
+            id="choose-light-theme"
+            class="w-full flex items-center justify-between p-4 border-2 border-slate-200 dark:border-slate-600 rounded-xl hover:border-primary-300 dark:hover:border-primary-500 transition-all duration-200 group"
+          >
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+              </div>
+              <div class="text-left">
+                <div class="font-semibold text-slate-900 dark:text-white">Light Mode</div>
+                <div class="text-sm text-slate-500 dark:text-slate-400">Clean and bright interface</div>
+              </div>
+            </div>
+            <div class="w-6 h-6 border-2 border-slate-300 dark:border-slate-500 rounded-full group-hover:border-primary-500 transition-colors"></div>
+          </button>
+          
+          <button 
+            id="choose-dark-theme"
+            class="w-full flex items-center justify-between p-4 border-2 border-primary-500 bg-primary-50 dark:bg-primary-900/20 rounded-xl transition-all duration-200 group"
+          >
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-900 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+              </div>
+              <div class="text-left">
+                <div class="font-semibold text-slate-900 dark:text-white">Dark Mode</div>
+                <div class="text-sm text-slate-500 dark:text-slate-400">Easy on the eyes (Current)</div>
+              </div>
+            </div>
+            <div class="w-6 h-6 bg-primary-500 border-2 border-primary-500 rounded-full flex items-center justify-center">
+              <div class="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+          </button>
+        </div>
+        
+        <div class="mt-6 text-center">
+          <p class="text-xs text-slate-500 dark:text-slate-400">You can change this anytime in settings</p>
+        </div>
+      </div>
+    </div>
+
     <slot />
     
     <!-- Mobile Bottom Navigation -->
@@ -215,6 +290,38 @@ const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site);
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
+        // Theme preference modal functionality
+        const themeModal = document.getElementById('theme-preference-modal');
+        const chooseLightBtn = document.getElementById('choose-light-theme');
+        const chooseDarkBtn = document.getElementById('choose-dark-theme');
+
+        function setTheme(theme) {
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+          localStorage.setItem('theme', theme);
+          localStorage.setItem('themeModalSeen', 'true');
+          
+          if (themeModal) {
+            themeModal.classList.add('hidden');
+            themeModal.classList.remove('flex');
+          }
+        }
+
+        chooseLightBtn?.addEventListener('click', () => setTheme('light'));
+        chooseDarkBtn?.addEventListener('click', () => setTheme('dark'));
+
+        // Close modal when clicking outside
+        themeModal?.addEventListener('click', function(e) {
+          if (e.target === themeModal) {
+            localStorage.setItem('themeModalSeen', 'true');
+            themeModal.classList.add('hidden');
+            themeModal.classList.remove('flex');
+          }
+        });
+
         const mobileThredButton = document.getElementById('mobile-thred-button');
         const floatingThredButton = document.getElementById('floating-thred-button');
         const thredModal = document.getElementById('thred-modal');
