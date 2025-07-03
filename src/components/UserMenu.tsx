@@ -10,14 +10,28 @@ export default function UserMenu() {
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
 
   useEffect(() => {
-    getCurrentUser().then(setUser);
+    const loadUser = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+      } catch (error) {
+        console.error('Error loading user:', error);
+        setUser(null);
+      }
+    };
+    
+    loadUser();
   }, []);
 
   const handleSignOut = async () => {
-    await signOut();
-    setUser(null);
-    setShowMenu(false);
-    window.location.reload();
+    try {
+      await signOut();
+      setUser(null);
+      setShowMenu(false);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   if (!user) {

@@ -36,7 +36,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
       }
       onClose();
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'An error occurred');
     } finally {
       setLoading(false);
     }

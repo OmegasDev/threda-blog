@@ -13,11 +13,22 @@ export default function FollowButton({ hubId, initialFollowing = false, onFollow
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    getCurrentUser().then(setUser);
-    if (user) {
-      isFollowingHub(hubId).then(setIsFollowing);
-    }
-  }, [hubId, user]);
+    const loadUserAndFollowStatus = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+        
+        if (currentUser) {
+          const following = await isFollowingHub(hubId);
+          setIsFollowing(following);
+        }
+      } catch (error) {
+        console.error('Error loading user or follow status:', error);
+      }
+    };
+
+    loadUserAndFollowStatus();
+  }, [hubId]);
 
   const handleToggleFollow = async () => {
     if (!user) {
