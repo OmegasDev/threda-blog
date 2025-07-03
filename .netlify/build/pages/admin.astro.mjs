@@ -1,0 +1,80 @@
+/* empty css                                 */
+import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead, b as addAttribute } from '../chunks/astro/server_BlX9CtJd.mjs';
+import 'kleur/colors';
+import { $ as $$Layout } from '../chunks/Layout_ByfOOCLh.mjs';
+export { renderers } from '../renderers.mjs';
+
+const $$Index = createComponent(async ($$result, $$props, $$slots) => {
+  const mockPosts = [
+    {
+      id: "1",
+      title: "Welcome to Threda Admin",
+      slug: "welcome-to-threda",
+      published: true,
+      view_count: 150,
+      created_at: (/* @__PURE__ */ new Date()).toISOString(),
+      categories: { name: "Technology", color: "#10b981" }
+    }
+  ];
+  const mockCategories = [
+    { id: "1", name: "Technology", slug: "tech", color: "#10b981" },
+    { id: "2", name: "Sports", slug: "sports", color: "#8b5cf6" }
+  ];
+  let posts = mockPosts;
+  let categories = mockCategories;
+  let recentPosts = mockPosts;
+  try {
+    const { supabase } = await import('../chunks/supabase_Cqg1IQyO.mjs');
+    if (supabase) {
+      const { data: supabasePosts } = await supabase.from("posts").select("*");
+      const { data: supabaseCategories } = await supabase.from("categories").select("*");
+      const { data: supabaseRecentPosts } = await supabase.from("posts").select(`
+        *,
+        categories (*)
+      `).order("created_at", { ascending: false }).limit(5);
+      if (supabasePosts) posts = supabasePosts;
+      if (supabaseCategories) categories = supabaseCategories;
+      if (supabaseRecentPosts) recentPosts = supabaseRecentPosts;
+    }
+  } catch (error) {
+    console.warn("Using mock data for admin dashboard");
+  }
+  const publishedCount = posts?.filter((p) => p.published).length || 0;
+  const draftCount = posts?.filter((p) => !p.published).length || 0;
+  const totalViews = posts?.reduce((sum, p) => sum + (p.view_count || 0), 0) || 0;
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+  }
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Admin Dashboard - Threda" }, { "default": async ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="min-h-screen bg-gray-50"> <!-- Header --> <header class="bg-white shadow-sm border-b border-gray-200"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex justify-between items-center h-16"> <div class="flex items-center"> <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"> <span class="text-white font-bold text-sm">T</span> </div> <span class="ml-2 text-xl font-bold text-gray-900">Threda Admin</span> </div> <nav class="flex space-x-4"> <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+View Site
+</a> <a href="/admin/posts" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+Posts
+</a> <a href="/admin/categories" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+Categories
+</a> </nav> </div> </div> </header> <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <!-- Development Notice --> <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8"> <div class="flex"> <svg class="w-5 h-5 text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> <div class="ml-3"> <h3 class="text-sm font-medium text-blue-800">Development Mode</h3> <p class="mt-1 text-sm text-blue-700">
+Configure your Supabase credentials in the .env file to connect to your database. Currently showing mock data.
+</p> </div> </div> </div> <!-- Stats Grid --> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"> <div class="bg-white rounded-lg shadow p-6"> <div class="flex items-center"> <div class="p-2 bg-blue-100 rounded-lg"> <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path> </svg> </div> <div class="ml-4"> <p class="text-sm font-medium text-gray-600">Total Posts</p> <p class="text-2xl font-semibold text-gray-900">${posts?.length || 0}</p> </div> </div> </div> <div class="bg-white rounded-lg shadow p-6"> <div class="flex items-center"> <div class="p-2 bg-green-100 rounded-lg"> <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path> </svg> </div> <div class="ml-4"> <p class="text-sm font-medium text-gray-600">Published</p> <p class="text-2xl font-semibold text-gray-900">${publishedCount}</p> </div> </div> </div> <div class="bg-white rounded-lg shadow p-6"> <div class="flex items-center"> <div class="p-2 bg-yellow-100 rounded-lg"> <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path> </svg> </div> <div class="ml-4"> <p class="text-sm font-medium text-gray-600">Drafts</p> <p class="text-2xl font-semibold text-gray-900">${draftCount}</p> </div> </div> </div> <div class="bg-white rounded-lg shadow p-6"> <div class="flex items-center"> <div class="p-2 bg-purple-100 rounded-lg"> <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path> </svg> </div> <div class="ml-4"> <p class="text-sm font-medium text-gray-600">Total Views</p> <p class="text-2xl font-semibold text-gray-900">${totalViews.toLocaleString()}</p> </div> </div> </div> </div> <!-- Quick Actions --> <div class="bg-white rounded-lg shadow mb-8"> <div class="px-6 py-4 border-b border-gray-200"> <h2 class="text-lg font-semibold text-gray-900">Quick Actions</h2> </div> <div class="p-6"> <div class="grid grid-cols-1 md:grid-cols-3 gap-4"> <a href="/admin/posts/new" class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"> <svg class="w-8 h-8 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path> </svg> <div> <h3 class="font-medium text-gray-900">Create New Post</h3> <p class="text-sm text-gray-500">Start writing a new article</p> </div> </a> <a href="/admin/categories" class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors"> <svg class="w-8 h-8 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path> </svg> <div> <h3 class="font-medium text-gray-900">Manage Categories</h3> <p class="text-sm text-gray-500">Add or edit content categories</p> </div> </a> <a href="/admin/ads" class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors"> <svg class="w-8 h-8 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path> </svg> <div> <h3 class="font-medium text-gray-900">Ad Management</h3> <p class="text-sm text-gray-500">Configure advertisement placements</p> </div> </a> </div> </div> </div> <!-- Recent Posts --> <div class="bg-white rounded-lg shadow"> <div class="px-6 py-4 border-b border-gray-200"> <div class="flex justify-between items-center"> <h2 class="text-lg font-semibold text-gray-900">Recent Posts</h2> <a href="/admin/posts" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+View all posts →
+</a> </div> </div> <div class="overflow-x-auto"> <table class="min-w-full divide-y divide-gray-200"> <thead class="bg-gray-50"> <tr> <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th> <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th> <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th> <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th> <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th> </tr> </thead> <tbody class="bg-white divide-y divide-gray-200"> ${recentPosts && recentPosts.length > 0 ? recentPosts.map((post) => renderTemplate`<tr> <td class="px-6 py-4 whitespace-nowrap"> <div class="text-sm font-medium text-gray-900 max-w-xs truncate"> <a${addAttribute(`/admin/posts/${post.id}`, "href")} class="hover:text-blue-600"> ${post.title} </a> </div> </td> <td class="px-6 py-4 whitespace-nowrap"> ${post.categories && renderTemplate`<span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white"${addAttribute(`background-color: ${post.categories.color}`, "style")}> ${post.categories.name} </span>`} </td> <td class="px-6 py-4 whitespace-nowrap"> <span${addAttribute(`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${post.published ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`, "class")}> ${post.published ? "Published" : "Draft"} </span> </td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> ${post.view_count || 0} </td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> ${formatDate(post.created_at)} </td> </tr>`) : renderTemplate`<tr> <td colspan="5" class="px-6 py-12 whitespace-nowrap text-center text-gray-500"> <div class="text-center"> <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path> </svg> <h3 class="mt-2 text-sm font-medium text-gray-900">No posts</h3> <p class="mt-1 text-sm text-gray-500">Get started by creating a new post.</p> <div class="mt-6"> <a href="/admin/posts/new" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"> <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path> </svg>
+New Post
+</a> </div> </div> </td> </tr>`} </tbody> </table> </div> </div> </main> </div> ` })}`;
+}, "/home/project/src/pages/admin/index.astro", void 0);
+
+const $$file = "/home/project/src/pages/admin/index.astro";
+const $$url = "/admin";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$Index,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
