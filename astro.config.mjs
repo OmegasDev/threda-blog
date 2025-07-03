@@ -10,22 +10,26 @@ export default defineConfig({
   site: 'https://threda.netlify.app',
   vite: {
     ssr: {
-      noExternal: ['lucide-react']
+      noExternal: ['lucide-react'],
     },
     optimizeDeps: {
-      include: ['lucide-react']
+      include: ['lucide-react'],
     },
     build: {
       rollupOptions: {
         external: (id) => {
           // Prevent bundling of unused lucide icons
-          if (id.includes('lucide-react/dist/esm/icons/') && 
-              !['sun', 'moon', 'user', 'log-out', 'settings', 'plus', 'x', 'mail', 'lock', 'user-plus'].some(icon => id.includes(icon))) {
+          if (
+            id.includes('lucide-react/dist/esm/icons/') &&
+            !['sun', 'moon', 'user', 'log-out', 'settings', 'plus', 'x', 'mail', 'lock', 'user-plus'].some((icon) =>
+              id.includes(icon)
+            )
+          ) {
             return true;
           }
           return false;
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 });
